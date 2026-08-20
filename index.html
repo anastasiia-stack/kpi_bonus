@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Бонуси — PM та Ліди · Художники та Аніматори</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+
+<style>
+:root{
+  --bg:#eef1f6;--surface:#fff;--surface-2:#f7f9fc;
+  --border:#dde3ed;--border-2:#c8d1e0;
+  --text:#0d1626;--text-2:#5e718a;
+  --accent:#1d5fd4;--accent-f:#e8f0fd;
+  --ok:#0a8f5c;--ok-f:#e4f6ef;
+  --warn:#c96b00;--warn-f:#fef3e2;
+  --bad:#c8253a;--bad-f:#fde8eb;
+  --r:10px;--mono:'JetBrains Mono','Fira Code',ui-monospace,monospace;
+  --sh:0 1px 2px rgba(0,0,0,.06),0 1px 4px rgba(0,0,0,.04);
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0d1626;--surface:#182234;--surface-2:#0d1626;
+  --border:#2a3a52;--border-2:#3d5070;
+  --text:#edf2fb;--text-2:#8aa0be;
+  --accent:#5b9cf6;--accent-f:#112040;
+  --ok:#34c68a;--ok-f:#052e1e;
+  --warn:#f7a535;--warn-f:#2a1800;
+  --bad:#f46679;--bad-f:#2e0a10;
+  --sh:0 1px 3px rgba(0,0,0,.3);
+}}
+:root[data-theme="dark"]{
+  --bg:#0d1626;--surface:#182234;--surface-2:#0d1626;
+  --border:#2a3a52;--border-2:#3d5070;
+  --text:#edf2fb;--text-2:#8aa0be;
+  --accent:#5b9cf6;--accent-f:#112040;
+  --ok:#34c68a;--ok-f:#052e1e;
+  --warn:#f7a535;--warn-f:#2a1800;
+  --bad:#f46679;--bad-f:#2e0a10;
+  --sh:0 1px 3px rgba(0,0,0,.3);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.55;min-height:100vh}
+.app{max-width:780px;margin:0 auto;padding:24px 16px 64px}
+
+/* header */
+.ph{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
+.ph-title{font-size:19px;font-weight:700;letter-spacing:-.025em;line-height:1.2}
+.ph-sub{font-size:12px;color:var(--text-2);margin-top:2px}
+.pill{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--accent-f);color:var(--accent)}
+
+/* top-level tabs */
+.top-tabs{display:flex;gap:2px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:3px;margin-bottom:18px;box-shadow:var(--sh)}
+.tt{flex:1;padding:8px 14px;border-radius:8px;border:none;background:transparent;cursor:pointer;font-size:13px;font-weight:600;color:var(--text-2);transition:all .15s;font-family:'Inter',system-ui,sans-serif;text-align:center;outline:none}
+.tt:hover{color:var(--text)}
+.tt.active{background:var(--accent);color:#fff}
+.tt:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tab-pane{display:none}.tab-pane.active{display:block}
+
+/* cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;box-shadow:var(--sh);margin-bottom:10px}
+.ch{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.ch-left{display:flex;align-items:center;gap:8px}
+.clabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-2)}
+
+/* pct */
+.pct{font-family:var(--mono);font-size:24px;font-weight:600;font-variant-numeric:tabular-nums;letter-spacing:-.025em;line-height:1;min-width:72px;text-align:right}
+.pct-ok{color:var(--ok)}.pct-warn{color:var(--warn)}.pct-bad{color:var(--bad)}.pct-n{color:var(--text-2)}
+
+/* progress */
+.pb-wrap{height:4px;background:var(--border);border-radius:99px;overflow:hidden;margin-top:10px}
+.pb{height:100%;border-radius:99px;transition:width .3s,background .3s;min-width:0}
+
+/* project type tabs */
+.type-tabs{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.type-tab{flex:1;min-width:110px;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface-2);cursor:pointer;font-size:13px;font-weight:600;color:var(--text-2);transition:all .15s;text-align:center;outline:none;font-family:'Inter',system-ui,sans-serif}
+.type-tab:hover{border-color:var(--accent);color:var(--accent)}
+.type-tab.active{border-color:var(--accent);background:var(--accent-f);color:var(--accent)}
+
+/* grid */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.f{display:flex;flex-direction:column;gap:5px}
+.fl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-2)}
+
+/* inputs */
+input[type="text"],input[type="number"],input[type="password"],select,textarea{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:7px;background:var(--surface-2);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:13px;outline:none;transition:border-color .12s,box-shadow .12s;appearance:none;-moz-appearance:textfield}
+input[type="number"]::-webkit-inner-spin-button,input[type="number"]::-webkit-outer-spin-button{-webkit-appearance:none}
+input.m,select.m{font-family:var(--mono);font-variant-numeric:tabular-nums}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(29,95,212,.13)}
+input[readonly]{color:var(--text-2);cursor:default}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%238aa0be' d='M3.5 5.5l4.5 4.5 4.5-4.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center;background-size:14px;padding-right:26px;cursor:pointer}
+textarea{resize:vertical;min-height:90px;font-size:12px;line-height:1.4}
+
+/* result rows */
+.rr{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding:5px 0}
+.rr+.rr{border-top:1px solid var(--border)}
+.rl{font-size:13px;color:var(--text-2);flex:1}
+.rv{font-family:var(--mono);font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* banners */
+.banner{display:flex;align-items:center;gap:8px;padding:9px 13px;border-radius:7px;font-size:13px;font-weight:600;margin-bottom:6px}
+.banner:last-child{margin-bottom:0}
+.b-ok{background:var(--ok-f);color:var(--ok)}.b-warn{background:var(--warn-f);color:var(--warn)}.b-bad{background:var(--bad-f);color:var(--bad)}
+.banners{margin-top:12px}
+
+/* bonus person */
+.bp{padding:14px 0}
+.bp+.bp{border-top:1px solid var(--border)}
+.bph{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:10px;flex-wrap:wrap}
+.bpn{font-size:13px;font-weight:700}
+.bpr{display:flex;align-items:center;gap:6px;flex-shrink:0;flex-wrap:wrap}
+.bpr-label{font-size:11px;color:var(--text-2);white-space:nowrap}
+.elig-badge{font-size:11px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:4px;display:inline-block}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:7px;font-family:'Inter',system-ui,sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .12s;border:1px solid transparent;outline:none;white-space:nowrap}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.bp-{background:var(--accent);color:#fff;border-color:var(--accent)}.bp-:hover{opacity:.85}
+.bo-{background:transparent;border-color:var(--border-2);color:var(--text)}.bo-:hover{background:var(--surface-2)}
+.bg-{background:transparent;border-color:transparent;color:var(--text-2)}.bg-:hover{background:var(--surface-2);color:var(--text)}
+.btn-sm{padding:5px 10px;font-size:12px}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+
+/* final card */
+.fc{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:10px;box-shadow:var(--sh)}
+.fc-split{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:start}
+.fc-big{font-family:var(--mono);font-size:38px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.04em;line-height:1;margin:4px 0;transition:color .2s}
+.fc-sub{font-size:12px;color:var(--text-2);margin-top:3px}
+.bt-right{text-align:right}
+.bt-amt{font-family:var(--mono);font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em;line-height:1;margin:3px 0}
+.bt-hrs{font-size:12px;color:var(--text-2)}
+
+/* saved */
+.sv-sec{margin-top:24px}
+.sv-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.sv-empty{text-align:center;padding:20px;color:var(--text-2);font-size:13px;background:var(--surface);border:1px dashed var(--border);border-radius:var(--r)}
+.ri{display:flex;align-items:center;gap:10px;padding:11px 13px;background:var(--surface);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:border-color .12s;margin-bottom:8px}
+.ri:hover{border-color:var(--accent)}
+.ri-body{flex:1;min-width:0}
+.ri-name{font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ri-meta{font-size:11px;color:var(--text-2);margin-top:1px}
+.ri-pct{font-family:var(--mono);font-size:15px;font-weight:700;font-variant-numeric:tabular-nums;min-width:48px;text-align:right}
+.ri-del{width:26px;height:26px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border);border-radius:6px;background:transparent;cursor:pointer;color:var(--text-2);font-size:12px;flex-shrink:0;transition:all .12s}
+.ri-del:hover{border-color:var(--bad);background:var(--bad-f);color:var(--bad)}
+
+/* note */
+.note{font-size:12px;color:var(--text-2);padding:8px 12px;background:var(--surface-2);border-radius:7px;border:1px solid var(--border);margin-top:10px}
+
+/* toast */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--text);color:var(--surface);padding:8px 18px;border-radius:8px;font-size:13px;font-weight:600;opacity:0;transition:opacity .18s,transform .18s;pointer-events:none;z-index:999;white-space:nowrap}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* collapsible */
+.coll-hd{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.coll-hd:hover .clabel{color:var(--accent)}
+.coll-body{margin-top:12px}
+.coll-body.hidden{display:none}
+.coll-arrow{font-size:12px;color:var(--text-2);transition:transform .15s}
+.coll-arrow.open{transform:rotate(180deg)}
+
+/* ── Tab 2 — task table ── */
+.tbl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.tasks{width:100%;border-collapse:collapse;font-size:12px;white-space:nowrap}
+table.tasks th{background:var(--surface-2);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-2);padding:6px 8px;border-bottom:1px solid var(--border);text-align:left}
+table.tasks td{padding:4px 6px;border-bottom:1px solid var(--border);vertical-align:middle}
+table.tasks tr:last-child td{border-bottom:none}
+table.tasks tr.row-bonus{background:rgba(10,143,92,.05)}
+table.tasks tr.row-penalty{background:rgba(200,37,58,.06)}
+table.tasks tr.row-small{background:rgba(201,107,0,.04)}
+table.tasks td input,table.tasks td select{padding:4px 6px;font-size:12px;border-radius:5px;min-width:0}
+table.tasks td input[type="number"]{width:70px}
+table.tasks td input.wide{width:130px}
+table.tasks td select.sel-type{width:82px}
+table.tasks td select.sel-lvl{width:82px}
+.kpi-val{font-family:var(--mono);font-variant-numeric:tabular-nums;font-weight:700;font-size:12px}
+.kpi-ok{color:var(--ok)}.kpi-warn{color:var(--warn)}.kpi-bad{color:var(--bad)}.kpi-n{color:var(--text-2)}
+.status-chip{display:inline-block;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;white-space:nowrap}
+.s-bonus{background:var(--ok-f);color:var(--ok)}
+.s-penalty{background:var(--bad-f);color:var(--bad)}
+.s-small{background:var(--warn-f);color:var(--warn)}
+.s-none{background:var(--surface-2);color:var(--text-2)}
+
+/* summary2 */
+.sum2{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.sum2-cell{background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.sum2-lbl{font-size:11px;color:var(--text-2);text-transform:uppercase;font-weight:700;letter-spacing:.05em;margin-bottom:4px}
+.sum2-val{font-family:var(--mono);font-size:20px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.sum2-sub{font-size:11px;color:var(--text-2);margin-top:2px}
+.sum2-val.ok{color:var(--ok)}.sum2-val.bad{color:var(--bad)}
+
+/* profile table */
+.ptbl{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+.ptbl th{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-2);padding:5px 8px;border-bottom:1px solid var(--border);text-align:left}
+.ptbl td{padding:4px 6px;border-bottom:1px solid var(--border)}
+.ptbl tr:last-child td{border-bottom:none}
+.ptbl td input,.ptbl td select{font-size:12px;padding:4px 6px;border-radius:5px}
+.ptbl td input{width:130px}
+.ptbl td select{width:90px}
+
+@media(max-width:560px){
+  .g2,.g3{grid-template-columns:1fr}
+  .fc-split{grid-template-columns:1fr}.bt-right{text-align:left}.fc-big{font-size:30px}
+  .type-tab{min-width:0;font-size:12px;padding:7px 8px}
+  .sum2{grid-template-columns:1fr 1fr}
+  .tt{font-size:12px;padding:7px 8px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="ph">
+  <div>
+    <div class="ph-title">💰 Бонусна система</div>
+    <div class="ph-sub">PM та Ліди · Художники та Аніматори</div>
+  </div>
+  <span class="pill">🔒 дані локально</span>
+</div>
+
+<div class="top-tabs">
+  <button class="tt active" onclick="showTab('pm')">💰 PM та Арт-Лід</button>
+  <button class="tt" onclick="showTab('art')">🎨 Художники та Аніматори</button>
+</div>
+
+<!-- ══════════════ TAB 1: PM + ART LEAD ══════════════ -->
+<div id="tab-pm" class="tab-pane active">
+
+<!-- Project info -->
+<div class="card">
+  <div class="g2">
+    <div class="f"><div class="fl">Назва проекту</div><input type="text" id="projName" placeholder="Напр.: ElaGames — Slot v2"></div>
+    <div class="f"><div class="fl">Дата закриття</div><input type="text" id="projDate" placeholder="ДД.ММ.РРРР"></div>
+  </div>
+  <div class="type-tabs">
+    <button class="type-tab active" data-type="art" onclick="setProjType('art')">🎨 Тільки арт</button>
+    <button class="type-tab" data-type="art+anim" onclick="setProjType('art+anim')">🎨🎬 Арт + анімація</button>
+    <button class="type-tab" data-type="anim" onclick="setProjType('anim')">🎬 Тільки анімація</button>
+  </div>
+</div>
+
+<!-- Art cushion -->
+<div class="card" id="artCard">
+  <div class="ch">
+    <div class="ch-left"><span style="font-size:18px">🎨</span><span class="clabel">Подушка Арту</span></div>
+    <div class="pct pct-n" id="artPct">—%</div>
+  </div>
+  <div class="g2">
+    <div class="f"><div class="fl">Стартова подушка (год)</div><input type="number" class="m" id="artStart" placeholder="0" min="0" step="0.5" oninput="calc()"></div>
+    <div class="f"><div class="fl">Фінальна подушка (год)</div><input type="number" class="m" id="artFinal" placeholder="0" min="0" step="0.5" oninput="calc()"></div>
+  </div>
+  <div class="pb-wrap"><div class="pb" id="artBar" style="width:0%;background:var(--border-2)"></div></div>
+</div>
+
+<!-- Anim cushion -->
+<div class="card" id="animCard" style="display:none">
+  <div class="ch">
+    <div class="ch-left"><span style="font-size:18px">🎬</span><span class="clabel">Подушка Анімації</span></div>
+    <div class="pct pct-n" id="animPct">—%</div>
+  </div>
+  <div class="g2">
+    <div class="f"><div class="fl">Стартова подушка (год)</div><input type="number" class="m" id="animStart" placeholder="0" min="0" step="0.5" oninput="calc()"></div>
+    <div class="f"><div class="fl">Фінальна подушка (год)</div><input type="number" class="m" id="animFinal" placeholder="0" min="0" step="0.5" oninput="calc()"></div>
+  </div>
+  <div class="pb-wrap"><div class="pb" id="animBar" style="width:0%;background:var(--border-2)"></div></div>
+</div>
+
+<!-- Combined summary -->
+<div class="card">
+  <div class="ch">
+    <div class="ch-left"><span style="font-size:18px">📊</span><span class="clabel" id="summaryLabel">Зведена подушка</span></div>
+    <div class="pct pct-n" id="combPct">—%</div>
+  </div>
+  <div class="rr"><span class="rl" id="lblTotS">Загальна стартова</span><span class="rv" id="totS">—</span></div>
+  <div class="rr"><span class="rl" id="lblTotF">Загальна фінальна</span><span class="rv" id="totF">—</span></div>
+  <div class="rr"><span class="rl">Залишок годин</span><span class="rv" id="totR">—</span></div>
+  <div class="pb-wrap" style="margin-top:10px"><div class="pb" id="combBar" style="width:0%;background:var(--border-2)"></div></div>
+  <div class="banners" id="banners" style="display:none;margin-top:12px"></div>
+</div>
+
+<!-- Bonuses -->
+<div class="card">
+  <div class="ch" style="margin-bottom:0">
+    <div class="ch-left"><span style="font-size:18px">💸</span><span class="clabel">Бонуси PM та Ліда</span></div>
+  </div>
+
+  <!-- PM -->
+  <div class="bp">
+    <div class="bph">
+      <span class="bpn">Project Manager <span id="pmElig" class="elig-badge" style="display:none"></span></span>
+      <div class="bpr">
+        <span class="bpr-label">Рівень:</span>
+        <select id="pmLvl" style="width:auto" onchange="calc()">
+          <option value="200">Junior · 200 грн/год</option>
+          <option value="260">Middle · 260 грн/год</option>
+        </select>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="f"><div class="fl">Бонус (год)</div><input type="number" class="m" id="pmH" placeholder="0" min="0" step="0.5" oninput="calc()"></div>
+      <div class="f"><div class="fl">Сума (грн) · авто</div><input type="number" class="m" id="pmU" placeholder="—" readonly></div>
+    </div>
+  </div>
+
+  <!-- Art Lead -->
+  <div class="bp" id="alSec">
+    <div class="bph">
+      <span class="bpn">Арт-лід <span id="alElig" class="elig-badge" style="display:none"></span></span>
+      <div class="bpr">
+        <span class="bpr-label">Рівень:</span>
+        <select id="alLvl" style="width:auto" onchange="applyLeadRate('alLvl','alRate','alU');calc()">
+          <option value="">— вручну —</option>
+          <option value="400">Middle · 400 грн/год</option>
+          <option value="500">Senior · 500 грн/год</option>
+        </select>
+        <input type="number" class="m" id="alRate" placeholder="грн/год" min="0" style="width:90px"
+          oninput="$('alLvl').value='';delete $('alU').dataset.m;calc()">
+      </div>
+    </div>
+    <div class="g2">
+      <div class="f"><div class="fl">Бонус (год)</div>
+        <input type="number" class="m" id="alH" placeholder="0" min="0" step="0.5" oninput="delete $('alU').dataset.m;calc()">
+      </div>
+      <div class="f"><div class="fl">Сума (грн)</div>
+        <input type="number" class="m" id="alU" placeholder="0" min="0" oninput="this.dataset.m='1';calc()">
+      </div>
+    </div>
+  </div>
+
+  <!-- Artist/Anim bonuses from Tab 2 -->
+  <div class="bp" id="artBonusSec">
+    <div class="bph">
+      <span class="bpn" style="color:var(--text-2);font-size:12px">🎨 Бонуси художників та аніматорів (з вкладки 2)</span>
+      <button class="btn bg- btn-sm" onclick="pullArtistBonus()" title="Оновити з вкладки 2">↺ Оновити</button>
+    </div>
+    <div class="g2">
+      <div class="f"><div class="fl">Годин (від'ємається від подушки)</div>
+        <input type="number" class="m" id="artistBonusH" placeholder="0" min="0" step="0.5" oninput="calc()">
+      </div>
+      <div class="f"><div class="fl">Сума грн (довідково)</div>
+        <input type="number" class="m" id="artistBonusU" placeholder="0" readonly>
+      </div>
+    </div>
+  </div>
+
+  <div class="note" id="animOnlyNote" style="display:none">
+    ℹ️ У проектах «Тільки анімація» бонус нараховується лише PM. Арт-ліду бонус не передбачено.
+  </div>
+</div>
+
+<!-- Final result -->
+<div class="fc">
+  <div class="clabel" style="margin-bottom:14px">Фінальна подушка після всіх бонусів</div>
+  <div class="fc-split">
+    <div>
+      <div class="fc-big" id="finHrs">— год</div>
+      <div class="fc-sub" id="finPct">—% від початкової</div>
+    </div>
+    <div class="bt-right">
+      <div class="clabel">Всього бонусів</div>
+      <div class="bt-amt" id="totBU">—</div>
+      <div class="bt-hrs" id="totBH">— год</div>
+    </div>
+  </div>
+  <div class="acts">
+    <button class="btn bp-" onclick="saveRec()">💾 Зберегти</button>
+    <button class="btn bo-" onclick="copyRep()">📋 Копіювати звіт</button>
+    <button class="btn bg-" onclick="resetAll()">↺ Очистити</button>
+  </div>
+</div>
+
+<!-- Saved records -->
+<div class="sv-sec">
+  <div class="sv-hd"><span class="clabel">Збережені розрахунки</span><span id="svCnt" style="font-size:12px;color:var(--text-2)"></span></div>
+  <div id="svList"></div>
+</div>
+
+</div><!-- /tab-pm -->
+
+<!-- ══════════════ TAB 2: ARTISTS & ANIMATORS ══════════════ -->
+<div id="tab-art" class="tab-pane">
+
+<!-- Jira OAuth card -->
+<div class="card" id="jiraAuthCard">
+  <div id="jiraConnected" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="font-weight:700;font-size:14px">✅ Підключено до Jira Cloud</div>
+        <div id="jiraCloudName" style="font-size:12px;color:var(--text-2);margin-top:2px"></div>
+      </div>
+      <button class="btn bg-" onclick="disconnectJira()">Відключити</button>
+    </div>
+  </div>
+  <div id="jiraSetup">
+    <div class="ch-left" style="margin-bottom:12px"><span style="font-size:18px">🔗</span><span class="clabel">Підключення до Jira Cloud</span></div>
+    <div class="g2" style="margin-bottom:10px">
+      <div class="f">
+        <div class="fl">Client ID (OAuth App)</div>
+        <input type="text" id="jiraClientId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" autocomplete="off">
+      </div>
+      <div class="f" style="justify-content:flex-end">
+        <button class="btn bp-" onclick="connectJira()">🔐 Підключити Jira</button>
+      </div>
+    </div>
+    <div class="coll-hd" onclick="toggleColl('jiraHelp','jiraHelpArrow')">
+      <span style="font-size:12px;color:var(--accent)">❓ Як отримати Client ID?</span>
+      <span class="coll-arrow" id="jiraHelpArrow">▼</span>
+    </div>
+    <div class="coll-body hidden" id="jiraHelp">
+      <div class="note" style="margin-top:8px;font-size:12px;line-height:1.8">
+        <strong>1.</strong> Відкрийте <a href="https://developer.atlassian.com/console/myapps/" target="_blank" style="color:var(--accent)">developer.atlassian.com → My apps</a><br>
+        <strong>2.</strong> Create app → <em>OAuth 2.0 integration</em><br>
+        <strong>3.</strong> Authorization → Callback URL — вставте:<br>
+        <div style="display:flex;align-items:center;gap:6px;margin:4px 0 6px">
+          <code id="cbUrlDisplay" style="background:var(--surface-2);padding:3px 7px;border-radius:5px;font-size:11px;word-break:break-all;flex:1;border:1px solid var(--border)"></code>
+          <button class="btn bg- btn-sm" onclick="copyCallbackUrl()">📋</button>
+        </div>
+        <strong>4.</strong> Permissions → <em>Jira API</em> → «View Jira issue data» та «View user profiles»<br>
+        <strong>5.</strong> Скопіюйте <strong>Client ID</strong> і вставте вище
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch">
+    <div class="ch-left"><span style="font-size:18px">📥</span><span class="clabel">Завантаження задач</span></div>
+  </div>
+  <div class="g2" style="margin-bottom:10px">
+    <div class="f"><div class="fl">Ключ проекту (Jira)</div><input type="text" id="projKey2" placeholder="MM, ELA, SLOT…" style="text-transform:uppercase"></div>
+    <div class="f"><div class="fl" style="opacity:0">.</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn bp-" onclick="loadFromJira()">🔗 Завантажити з Jira</button>
+        <button class="btn bo-" onclick="addEmptyTask()">+ Додати рядок</button>
+      </div>
+    </div>
+  </div>
+  <div class="f">
+    <div class="fl">Або вставте рядки з Excel (копіюйте колонки A–F: №, Назва, Виконавець, Tasks, Оцінка, Факт)</div>
+    <textarea id="pasteBuf" placeholder="MM-1&#9;High Symbols Full Dev&#9;vladlena&#9;1&#9;84.5&#9;76.2&#10;MM-2&#9;Low Symbols Full Dev&#9;Iryna&#9;1&#9;35&#9;52.9&#10;…"></textarea>
+    <div style="margin-top:6px;display:flex;gap:8px">
+      <button class="btn bp-" onclick="parsePaste()">📋 Імпортувати вставлене</button>
+      <button class="btn bg-" onclick="clearTasks()">✕ Очистити таблицю</button>
+    </div>
+  </div>
+</div>
+
+<!-- Assignee profiles -->
+<div class="card">
+  <div class="coll-hd" onclick="toggleColl('profBody','profArrow')">
+    <div class="ch-left" style="flex:1"><span style="font-size:18px">👥</span><span class="clabel">Профілі виконавців</span><span style="font-size:11px;color:var(--text-2);margin-left:8px">тип та рівень → збережуться у браузері</span></div>
+    <span class="coll-arrow open" id="profArrow">▼</span>
+  </div>
+  <div class="coll-body" id="profBody">
+    <div id="profTbl"></div>
+    <button class="btn bg- btn-sm" style="margin-top:8px" onclick="addProfile()">+ Додати виконавця</button>
+  </div>
+</div>
+
+<!-- Task table -->
+<div class="card">
+  <div class="ch">
+    <div class="ch-left"><span style="font-size:18px">📋</span><span class="clabel">Задачі проекту</span></div>
+    <span id="taskCount" style="font-size:12px;color:var(--text-2)"></span>
+  </div>
+  <div class="tbl-wrap">
+    <table class="tasks">
+      <thead>
+        <tr>
+          <th>#</th><th style="min-width:160px">Назва</th><th>Виконавець</th>
+          <th>Тип</th><th>Рівень</th>
+          <th>Оцінка</th><th>Факт</th><th>KPI%</th>
+          <th>Бонус год</th><th>Бонус грн</th><th>Статус</th><th></th>
+        </tr>
+      </thead>
+      <tbody id="taskBody"></tbody>
+    </table>
+  </div>
+  <div id="taskEmpty" class="sv-empty" style="display:none">Задачі ще не додані. Вставте дані з Excel або натисніть «Додати рядок».</div>
+</div>
+
+<!-- Summary Tab 2 -->
+<div class="fc">
+  <div class="clabel" style="margin-bottom:14px">Підсумок бонусів художників та аніматорів</div>
+  <div class="sum2">
+    <div class="sum2-cell">
+      <div class="sum2-lbl">Бонус (UAH)</div>
+      <div class="sum2-val ok" id="s2bonus">—</div>
+      <div class="sum2-sub" id="s2bonusH">— год</div>
+    </div>
+    <div class="sum2-cell">
+      <div class="sum2-lbl">Штрафи (UAH)</div>
+      <div class="sum2-val bad" id="s2penalty">—</div>
+      <div class="sum2-sub" id="s2penaltyN">— задач</div>
+    </div>
+    <div class="sum2-cell">
+      <div class="sum2-lbl">Нетто (UAH)</div>
+      <div class="sum2-val" id="s2net">—</div>
+      <div class="sum2-sub">= бонус − штрафи</div>
+    </div>
+  </div>
+  <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+    <div class="clabel" style="margin-bottom:10px">Переведення в години подушки</div>
+    <div class="g2">
+      <div class="f"><div class="fl">Курс Євро на день виплати (грн/€)</div>
+        <input type="number" class="m" id="eurRate" placeholder="48.27" min="1" step="0.01" oninput="calcSummary2()">
+      </div>
+      <div class="f"><div class="fl">Годин з подушки (нетто грн ÷ курс € ÷ 8)</div>
+        <input type="number" class="m" id="s2hours" placeholder="—" readonly>
+      </div>
+    </div>
+    <div class="acts">
+      <button class="btn bp-" onclick="transferToTab1()">→ Перенести в Tab 1</button>
+      <button class="btn bo-" onclick="copyRep2()">📋 Копіювати звіт</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /tab-art -->
+</div><!-- /app -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ── SHARED UTILS ─────────────────────────────────────── */
+const $ = id => document.getElementById(id);
+const n = id => parseFloat($(id).value)||0;
+const s = id => ($(id).value||'').trim();
+function setV(id,v){ $(id).value=v; }
+function setT(id,v){ $(id).textContent=v; }
+function fN(x,d=1){ if(!isFinite(x))return'—'; const r=parseFloat(x.toFixed(d)); return r%1===0?r.toFixed(0):r.toFixed(d); }
+function fU(x){ if(!x||!isFinite(x)||x===0)return'—'; return Math.round(x).toLocaleString('uk-UA')+' грн'; }
+function esc(str){ return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+let _tt;
+function toast(msg){ const el=$('toast'); el.textContent=msg; el.classList.add('on'); clearTimeout(_tt); _tt=setTimeout(()=>el.classList.remove('on'),2400); }
+
+function toggleColl(bodyId,arrowId){
+  const b=$(bodyId),a=$(arrowId);
+  b.classList.toggle('hidden');
+  a.classList.toggle('open');
+}
+
+/* ── TAB SWITCHING ────────────────────────────────────── */
+function showTab(id){
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tt').forEach(b=>b.classList.remove('active'));
+  $('tab-'+id).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+/* ══════════════════════════════════════════════════════ */
+/* ── TAB 1: PM + ART LEAD ─────────────────────────────── */
+/* ══════════════════════════════════════════════════════ */
+
+/* THRESHOLDS
+   art-only  : artStart ≤ 350 → artThr=20%, >350 → 25%; pmThr=artThr
+   art+anim  : totStart ≤ 500 → pmThr=45%, artThr=30%
+               totStart >  500 → pmThr=50%, artThr=35%
+   anim-only : animStart ≤ 140 → 15%; >140 → 22%  (PM only)
+*/
+function getThresholds(type, artStart, animStart){
+  const totStart = artStart+animStart;
+  if(type==='anim'){
+    const t = animStart<=140 ? 15 : 22;
+    return { artThr:null, pmThr:t };
+  }
+  if(type==='art+anim'){
+    const pmThr  = totStart<=500 ? 45 : 50;
+    const artThr = totStart<=500 ? 30 : 35;
+    return { artThr, pmThr };
+  }
+  const artThr = artStart<=350 ? 20 : 25;
+  return { artThr, pmThr:artThr };
+}
+
+function pctCls(p,thr){ if(p>=thr*2)return'pct-ok'; if(p>=thr)return'pct-warn'; return'pct-bad'; }
+function barClr(p,thr){ if(p>=thr*2)return'var(--ok)'; if(p>=thr)return'var(--warn)'; return'var(--bad)'; }
+function setBar(id,pct,thr){
+  const el=$(id); if(!el)return;
+  if(pct===null){el.style.width='0%';el.style.background='var(--border-2)';return;}
+  el.style.width=Math.min(100,Math.max(0,pct))+'%';
+  el.style.background=barClr(pct,thr);
+}
+
+let projType='art';
+function setProjType(t){
+  projType=t;
+  document.querySelectorAll('.type-tab').forEach(b=>b.classList.toggle('active',b.dataset.type===t));
+  $('artCard').style.display  =(t==='art'||t==='art+anim')?'block':'none';
+  $('animCard').style.display =(t==='anim'||t==='art+anim')?'block':'none';
+  $('alSec').style.display    =(t==='art'||t==='art+anim')?'block':'none';
+  $('animOnlyNote').style.display=(t==='anim')?'block':'none';
+  $('summaryLabel').textContent=(t==='anim')?'Подушка Анімації':'Зведена подушка';
+  $('lblTotS').textContent=(t==='anim')?'Стартова подушка':'Загальна стартова';
+  $('lblTotF').textContent=(t==='anim')?'Фінальна подушка':'Загальна фінальна';
+  calc();
+}
+
+function calc(){
+  const t=projType;
+  const artS=n('artStart'), artF=n('artFinal');
+  const anS=n('animStart'), anF=n('animFinal');
+  const {artThr,pmThr}=getThresholds(t,artS,anS);
+
+  if(t==='art'||t==='art+anim'){
+    const aPct=artS>0?(artF/artS)*100:null;
+    const el=$('artPct');
+    el.textContent=aPct!==null?fN(aPct)+'%':'—%';
+    el.className='pct '+(aPct!==null?pctCls(aPct,artThr):'pct-n');
+    setBar('artBar',aPct,artThr);
+  }
+  if(t==='anim'||t==='art+anim'){
+    const anPct=anS>0?(anF/anS)*100:null;
+    const el=$('animPct');
+    el.textContent=anPct!==null?fN(anPct)+'%':'—%';
+    el.className='pct '+(anPct!==null?pctCls(anPct,pmThr):'pct-n');
+    setBar('animBar',anPct,pmThr);
+  }
+
+  let totS,totF;
+  if(t==='art'){totS=artS;totF=artF;}
+  else if(t==='anim'){totS=anS;totF=anF;}
+  else{totS=artS+anS;totF=artF+anF;}
+
+  const cPct=totS>0?(totF/totS)*100:null;
+  const combEl=$('combPct');
+  combEl.textContent=cPct!==null?fN(cPct)+'%':'—%';
+  combEl.className='pct '+(cPct!==null?pctCls(cPct,pmThr):'pct-n');
+  setBar('combBar',cPct,pmThr);
+  setT('totS',totS>0?fN(totS)+' год':'—');
+  setT('totF',totS>0?fN(totF)+' год':'—');
+  setT('totR',totS>0?fN(totF)+' год':'—');
+
+  const artPctVal=artS>0?(artF/artS)*100:null;
+  const pmOk=cPct!==null&&cPct>=pmThr;
+  const alOk=artThr!==null&&artPctVal!==null&&artPctVal>=artThr;
+
+  // Banners
+  const bansEl=$('banners');
+  if(totS>0){
+    bansEl.style.display='block';
+    let html='';
+    if(cPct!==null){
+      const desc=t==='art+anim'?`Зведена подушка ${fN(cPct)}% — потрібно ≥${pmThr}%`:`Подушка ${fN(cPct)}% — потрібно ≥${pmThr}%`;
+      html+=`<div class="banner ${pmOk?'b-ok':'b-bad'}">${pmOk?'✅':'❌'} <strong>PM:</strong> ${desc} · бонус ${pmOk?'дозволено':'не дозволено'}</div>`;
+    }
+    if(t!=='anim'&&artPctVal!==null){
+      html+=`<div class="banner ${alOk?'b-ok':'b-bad'}">${alOk?'✅':'❌'} <strong>Арт-лід:</strong> арт-подушка ${fN(artPctVal)}% — потрібно ≥${artThr}% · бонус ${alOk?'дозволено':'не дозволено'}</div>`;
+    }
+    bansEl.innerHTML=html;
+  } else { bansEl.style.display='none'; }
+
+  function setElig(id,ok,show){
+    const el=$(id); if(!el)return;
+    if(!show){el.style.display='none';return;}
+    el.style.display='inline-block';
+    el.textContent=ok?'✅ дозволено':'❌ не дозволено';
+    el.style.background=ok?'var(--ok-f)':'var(--bad-f)';
+    el.style.color=ok?'var(--ok)':'var(--bad)';
+  }
+  setElig('pmElig',pmOk,cPct!==null);
+  setElig('alElig',alOk,t!=='anim'&&artPctVal!==null);
+
+  const pmRate=n('pmLvl'),pmH=n('pmH');
+  const pmU=pmH*pmRate;
+  setV('pmU',pmH>0?Math.round(pmU):'');
+
+  const alRate=n('alRate'),alH=n('alH');
+  if(!$('alU').dataset.m&&alRate>0&&alH>0) setV('alU',Math.round(alH*alRate));
+  const alU=t!=='anim'?n('alU'):0;
+
+  // Artist/Anim deduction
+  const artBonusH=n('artistBonusH');
+  const artBonusU=n('artistBonusU');
+
+  const totBH=pmH+(t!=='anim'?alH:0)+artBonusH;
+  const totBU=pmU+alU+artBonusU;
+
+  const finH=totF-totBH;
+  const finPct=totS>0?(finH/totS)*100:null;
+
+  const finEl=$('finHrs');
+  finEl.textContent=totS>0?fN(finH)+' год':'— год';
+  finEl.style.color=finH<0?'var(--bad)':finH===0?'var(--warn)':'var(--text)';
+  $('finPct').textContent=finPct!==null?fN(finPct)+'% від початкової':'—% від початкової';
+  $('finPct').style.color=(finPct!==null&&finPct<0)?'var(--bad)':'var(--text-2)';
+  setT('totBU',totBU>0?fU(totBU):'—');
+  setT('totBH',totBH>0?fN(totBH)+' год':'—');
+}
+
+function applyLeadRate(selId,rateId,uahId){
+  const v=$(selId).value;
+  if(v){setV(rateId,v);delete $(uahId).dataset.m;}
+}
+
+function pullArtistBonus(){
+  // Pull computed values from Tab 2 summary
+  const h=parseFloat($('s2hours').value)||0;
+  const u=parseFloat($('s2net').textContent.replace(/\D/g,''))||0;
+  setV('artistBonusH',h>0?h:'');
+  setV('artistBonusU',u>0?u:'');
+  calc();
+  toast('→ Перенесено з Вкладки 2');
+}
+
+/* ── SNAPSHOT & STORAGE ────────────────────────────────── */
+function snap(){
+  return {
+    id:Date.now(), ts:new Date().toLocaleString('uk-UA'),
+    nm:s('projName')||'Без назви', dt:s('projDate'), type:projType,
+    aS:n('artStart'),aF:n('artFinal'),anS:n('animStart'),anF:n('animFinal'),
+    pmR:n('pmLvl'),pmH:n('pmH'),
+    alLv:$('alLvl').value,alR:n('alRate'),alH:n('alH'),alU:n('alU'),
+    abH:n('artistBonusH'),abU:n('artistBonusU'),
+  };
+}
+
+function calcSnap(r){
+  const t=r.type||'art';
+  let totS,totF;
+  if(t==='art'){totS=r.aS;totF=r.aF;}
+  else if(t==='anim'){totS=r.anS;totF=r.anF;}
+  else{totS=r.aS+r.anS;totF=r.aF+r.anF;}
+  const cPct=totS>0?(totF/totS)*100:0;
+  const artPct=r.aS>0?(r.aF/r.aS)*100:0;
+  const {artThr,pmThr}=getThresholds(t,r.aS,r.anS);
+  const pmOk=cPct>=pmThr;
+  const alOk=artThr!==null&&artPct>=artThr;
+  const abH=r.abH||0;
+  const totBH=r.pmH+(t!=='anim'?r.alH:0)+abH;
+  const totBU=r.pmH*r.pmR+(t!=='anim'?r.alU:0)+(r.abU||0);
+  const finH=totF-totBH;
+  const finPct=totS>0?(finH/totS)*100:0;
+  return{totS,totF,cPct,artPct,pmOk,alOk,artThr,pmThr,totBH,totBU,finH,finPct};
+}
+
+let recs=[];
+try{recs=JSON.parse(localStorage.getItem('oh_bv4')||'[]');}catch(e){}
+function saveRec(){ recs.unshift(snap()); if(recs.length>100)recs.length=100; try{localStorage.setItem('oh_bv4',JSON.stringify(recs));}catch(e){} renderSaved(); toast('✅ Збережено'); }
+
+function loadRec(id){
+  const r=recs.find(x=>x.id===id); if(!r)return;
+  setV('projName',r.nm); setV('projDate',r.dt||'');
+  setV('artStart',r.aS||''); setV('artFinal',r.aF||'');
+  setV('animStart',r.anS||''); setV('animFinal',r.anF||'');
+  $('pmLvl').value=r.pmR||200; setV('pmH',r.pmH||'');
+  $('alLvl').value=r.alLv||''; setV('alRate',r.alR||''); setV('alH',r.alH||''); setV('alU',r.alU||'');
+  delete $('alU').dataset.m;
+  setV('artistBonusH',r.abH||''); setV('artistBonusU',r.abU||'');
+  setProjType(r.type||'art');
+  window.scrollTo({top:0,behavior:'smooth'}); toast('📂 Завантажено');
+}
+
+function delRec(id,e){
+  e.stopPropagation();
+  recs=recs.filter(x=>x.id!==id);
+  try{localStorage.setItem('oh_bv4',JSON.stringify(recs));}catch(e){}
+  renderSaved(); toast('🗑 Видалено');
+}
+
+const typeLabel={art:'🎨 Арт','art+anim':'🎨🎬 Арт+Анім',anim:'🎬 Анімація'};
+
+function renderSaved(){
+  const el=$('svList');
+  $('svCnt').textContent=recs.length?recs.length+' шт.':'';
+  if(!recs.length){el.innerHTML='<div class="sv-empty">Збережених розрахунків ще немає</div>';return;}
+  el.innerHTML=recs.map(r=>{
+    const c=calcSnap(r); const t=r.type||'art';
+    const alStr=t!=='anim'?` · Лід${c.alOk?'✅':'❌'}`:'';
+    const finStr=c.finH>=0?fN(c.finH)+' год ('+fN(c.finPct)+'%)':'⚠️ від\'ємна';
+    const cls=c.pmOk?'pct-ok':'pct-bad';
+    return `<div class="ri" onclick="loadRec(${r.id})">
+      <div class="ri-body">
+        <div class="ri-name">${esc(r.nm)} <span style="font-weight:400;color:var(--text-2);font-size:11px">${typeLabel[t]||t}</span></div>
+        <div class="ri-meta">${esc(r.dt||r.ts)} · PM${c.pmOk?'✅':'❌'}${alStr} (≥${c.pmThr}%) · фінал ${finStr}</div>
+      </div>
+      <div class="ri-pct ${cls}">${fN(c.finPct)}%</div>
+      <button class="ri-del" onclick="delRec(${r.id},event)" title="Видалити">✕</button>
+    </div>`;
+  }).join('');
+}
+
+function copyRep(){
+  const sn=snap(); const c=calcSnap(sn); const t=sn.type||'art';
+  const pmLvl=sn.pmR===260?'Middle':'Junior';
+  const artPct=sn.aS>0?(sn.aF/sn.aS)*100:0;
+  const anPct=sn.anS>0?(sn.anF/sn.anS)*100:0;
+  let txt=`📊 РОЗРАХУНОК ПОДУШКИ ТА БОНУСІВ\n${'═'.repeat(44)}\nПроект : ${sn.nm}\nТип    : ${typeLabel[t]||t}\nДата   : ${sn.dt||'—'}\n`;
+  if(t==='art'||t==='art+anim') txt+=`\n🎨 АРТ\n  Стартова : ${fN(sn.aS)} год\n  Фінальна : ${fN(sn.aF)} год\n  Залишок  : ${fN(artPct)}%`;
+  if(t==='anim'||t==='art+anim') txt+=`\n🎬 АНІМАЦІЯ\n  Стартова : ${fN(sn.anS)} год\n  Фінальна : ${fN(sn.anF)} год\n  Залишок  : ${fN(anPct)}%`;
+  txt+=`\n\n📊 ЗВЕДЕНО\n  ${t==='art+anim'?'Загальна стартова':'Стартова'} : ${fN(c.totS)} год\n  ${t==='art+anim'?'Загальна фінальна':'Фінальна'} : ${fN(c.totF)} год\n  Залишок подушки : ${fN(c.cPct)}%\n  Поріг PM        : ≥${c.pmThr}% → ${c.pmOk?'✅ дозволено':'❌ не дозволено'}`;
+  if(t!=='anim') txt+=`\n  Поріг Арт-ліда  : ≥${c.artThr}% (арт ${fN(c.artPct)}%) → ${c.alOk?'✅ дозволено':'❌ не дозволено'}`;
+  txt+=`\n\n💸 БОНУСИ\n  PM (${pmLvl}) : ${fN(sn.pmH)} год × ${sn.pmR} грн/год = ${Math.round(sn.pmH*sn.pmR).toLocaleString('uk-UA')} грн`;
+  if(t!=='anim') txt+=`\n  Арт-лід    : ${fN(sn.alH)} год → ${sn.alU>0?sn.alU.toLocaleString('uk-UA')+' грн':'—'}`;
+  if(sn.abH>0) txt+=`\n  Художники/Аніматори : ${fN(sn.abH)} год / ${sn.abU>0?fU(sn.abU):'—'}`;
+  txt+=`\n  ${'─'.repeat(40)}\n  Всього бонусів : ${c.totBU>0?Math.round(c.totBU).toLocaleString('uk-UA')+' грн':'—'} / ${fN(c.totBH)} год\n\n🏁 ФІНАЛЬНА ПОДУШКА ПІСЛЯ БОНУСІВ\n  ${fN(c.finH)} год · ${fN(c.finPct)}% від початкової\n\n${'─'.repeat(40)}\nРозраховано: ${new Date().toLocaleString('uk-UA')}`;
+  navigator.clipboard.writeText(txt).then(()=>toast('📋 Скопійовано!')).catch(()=>toast('⚠️ Помилка'));
+}
+
+function resetAll(){
+  if(!confirm('Очистити всі поля?'))return;
+  ['projName','projDate','artStart','artFinal','animStart','animFinal','pmH','pmU','alRate','alH','alU','artistBonusH','artistBonusU'].forEach(id=>setV(id,''));
+  delete $('alU').dataset.m;
+  $('pmLvl').value=200; $('alLvl').value='';
+  setProjType('art');
+}
+
+/* ══════════════════════════════════════════════════════ */
+/* ── TAB 2: ARTISTS & ANIMATORS ────────────────────────── */
+/* ══════════════════════════════════════════════════════ */
+
+const RATES2={ art:{junior:200,middle:260,senior:390}, anim:{junior:250,middle:320,senior:430} };
+
+let tasks2=[];
+let nextId=1;
+
+function bonusForTask(est,act,type,level,manualH,manualUAH){
+  const kpi=(est>0&&act>0)?(est/act)*100:null;
+  let status='none', bonusH=0, bonusUAH=0, penalty=0;
+  if(kpi!==null){
+    if(kpi<82){ status='penalty'; penalty=1000; }
+    else if(kpi>=115){
+      if(est<=8){ status='small'; }
+      else{
+        status='bonus';
+        const saved=est-act;
+        bonusH=saved>0?Math.round(saved/0.5)*0.5:0;
+      }
+    }
+  }
+  const rate=(RATES2[type]||RATES2.art)[level]||260;
+  bonusUAH=bonusH*rate;
+  // Manual overrides
+  if(manualH!=null) bonusH=manualH;
+  if(manualUAH!=null){ bonusUAH=manualUAH; }
+  else if(manualH!=null){ bonusUAH=manualH*rate; }
+  return{kpi,status,bonusH,bonusUAH,penalty,rate};
+}
+
+function renderTasks2(){
+  const tbody=$('taskBody');
+  const empty=$('taskEmpty');
+  const cnt=$('taskCount');
+  if(!tasks2.length){
+    tbody.innerHTML='';
+    empty.style.display='block';
+    cnt.textContent='';
+    calcSummary2();
+    return;
+  }
+  empty.style.display='none';
+  cnt.textContent=tasks2.length+' задач';
+
+  tbody.innerHTML=tasks2.map((t,i)=>{
+    const {kpi,status,bonusH,bonusUAH,penalty}=bonusForTask(t.est,t.act,t.type,t.level,t.manualH,t.manualUAH);
+    const kpiStr=kpi!==null?fN(kpi)+'%':'—';
+    let kpiCls='kpi-n';
+    if(kpi!==null){ if(kpi<82)kpiCls='kpi-bad'; else if(kpi<115)kpiCls='kpi-n'; else kpiCls='kpi-ok'; }
+    const rowCls=status==='bonus'?'row-bonus':status==='penalty'?'row-penalty':status==='small'?'row-small':'';
+    const statusHtml={
+      bonus:`<span class="status-chip s-bonus">+${fN(bonusH)}г</span>`,
+      penalty:`<span class="status-chip s-penalty">штраф 1000</span>`,
+      small:`<span class="status-chip s-small">≤8г</span>`,
+      none:`<span class="status-chip s-none">—</span>`,
+    }[status]||'';
+    const bHval=t.manualH!=null?t.manualH:bonusH;
+    const bUval=t.manualUAH!=null?t.manualUAH:bonusUAH;
+    return `<tr class="${rowCls}" data-id="${t.id}">
+      <td><input type="text" value="${esc(t.taskNo)}" style="width:58px" oninput="taskSet(${t.id},'taskNo',this.value)"></td>
+      <td><input type="text" class="wide" value="${esc(t.name)}" oninput="taskSet(${t.id},'name',this.value)"></td>
+      <td><input type="text" value="${esc(t.assignee)}" style="width:100px" oninput="taskSetA(${t.id},this.value)"></td>
+      <td><select class="sel-type" onchange="taskSet(${t.id},'type',this.value)">
+        <option value="art" ${t.type==='art'?'selected':''}>🎨 Худ.</option>
+        <option value="anim" ${t.type==='anim'?'selected':''}>🎬 Анім.</option>
+      </select></td>
+      <td><select class="sel-lvl" onchange="taskSet(${t.id},'level',this.value)">
+        <option value="junior" ${t.level==='junior'?'selected':''}>Junior</option>
+        <option value="middle" ${t.level==='middle'?'selected':''}>Middle</option>
+        <option value="senior" ${t.level==='senior'?'selected':''}>Senior</option>
+      </select></td>
+      <td><input type="number" class="m" value="${t.est||''}" min="0" step="0.5" oninput="taskSet(${t.id},'est',+this.value)"></td>
+      <td><input type="number" class="m" value="${t.act||''}" min="0" step="0.5" oninput="taskSet(${t.id},'act',+this.value)"></td>
+      <td><span class="kpi-val ${kpiCls}">${kpiStr}</span></td>
+      <td><input type="number" class="m" value="${bHval||''}" min="0" step="0.5" placeholder="авто"
+        oninput="taskSet(${t.id},'manualH',this.value===''?null:+this.value)"></td>
+      <td><input type="number" class="m" value="${bUval||''}" min="0" placeholder="авто"
+        oninput="taskSet(${t.id},'manualUAH',this.value===''?null:+this.value)"></td>
+      <td>${statusHtml}</td>
+      <td><button class="ri-del" onclick="delTask(${t.id})" title="Видалити">✕</button></td>
+    </tr>`;
+  }).join('');
+
+  calcSummary2();
+}
+
+function taskSet(id,field,val){
+  const t=tasks2.find(x=>x.id===id); if(!t)return;
+  t[field]=val;
+  // Don't re-render full table on every keystroke for text fields
+  if(field==='est'||field==='act'||field==='type'||field==='level'||field==='manualH'||field==='manualUAH'){
+    renderTasks2();
+  } else {
+    calcSummary2();
+  }
+  saveTasks2();
+}
+
+function taskSetA(id,val){
+  const t=tasks2.find(x=>x.id===id); if(!t)return;
+  t.assignee=val;
+  // Auto-apply profile
+  const prof=profiles.find(p=>p.name.toLowerCase()===val.toLowerCase());
+  if(prof){ t.type=prof.type; t.level=prof.level; renderTasks2(); }
+  saveTasks2();
+}
+
+function delTask(id){
+  tasks2=tasks2.filter(x=>x.id!==id);
+  renderTasks2(); saveTasks2();
+}
+
+function addEmptyTask(){
+  tasks2.push({id:nextId++,taskNo:'',name:'',assignee:'',type:'art',level:'middle',est:0,act:0,manualH:null,manualUAH:null});
+  renderTasks2(); saveTasks2();
+  // scroll table into view
+  $('taskBody').parentElement.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function clearTasks(){
+  if(tasks2.length&&!confirm('Очистити всі задачі?'))return;
+  tasks2=[]; renderTasks2(); saveTasks2(); toast('🗑 Таблиця очищена');
+}
+
+function calcSummary2(){
+  let totalBonusH=0, totalBonusUAH=0, totalPenalty=0, penaltyN=0;
+  tasks2.forEach(t=>{
+    const b=bonusForTask(t.est,t.act,t.type,t.level,t.manualH,t.manualUAH);
+    totalBonusH+=b.bonusH;
+    totalBonusUAH+=b.bonusUAH;
+    if(b.status==='penalty'){totalPenalty+=1000;penaltyN++;}
+  });
+  const netUAH=totalBonusUAH-totalPenalty;
+  $('s2bonus').textContent=totalBonusUAH>0?Math.round(totalBonusUAH).toLocaleString('uk-UA')+' грн':'—';
+  $('s2bonusH').textContent=totalBonusH>0?fN(totalBonusH)+' год':'—';
+  $('s2penalty').textContent=totalPenalty>0?Math.round(totalPenalty).toLocaleString('uk-UA')+' грн':'—';
+  $('s2penaltyN').textContent=penaltyN?penaltyN+' задач':'—';
+  const netEl=$('s2net');
+  netEl.textContent=netUAH!==0?Math.round(netUAH).toLocaleString('uk-UA')+' грн':'0 грн';
+  netEl.className='sum2-val '+(netUAH>0?'ok':netUAH<0?'bad':'');
+
+  const eur=n('eurRate');
+  const hrs=eur>0&&netUAH>0?+(netUAH/eur/8).toFixed(2):0;
+  setV('s2hours',hrs>0?hrs:'');
+  // store for pullArtistBonus
+  $('s2hours').dataset.uah=netUAH>0?Math.round(netUAH):0;
+}
+
+function transferToTab1(){
+  const hrs=parseFloat($('s2hours').value)||0;
+  const uah=parseFloat($('s2hours').dataset.uah)||0;
+  setV('artistBonusH',hrs>0?hrs:'');
+  setV('artistBonusU',uah>0?uah:'');
+  calc();
+  // Switch to Tab 1
+  document.querySelectorAll('.tt').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  $('tab-pm').classList.add('active');
+  document.querySelectorAll('.tt')[0].classList.add('active');
+  toast('→ Перенесено до Tab 1');
+}
+
+/* ── PASTE FROM EXCEL ────────────────────────────────── */
+function parsePaste(){
+  const raw=$('pasteBuf').value.trim();
+  if(!raw){toast('⚠️ Вставте дані в поле вище');return;}
+  const lines=raw.split('\n');
+  let added=0;
+  lines.forEach(line=>{
+    const cols=line.split('\t').map(c=>c.trim().replace(',','.'));
+    if(cols.length<5)return;
+    const taskNo=cols[0], name=cols[1], assignee=cols[2];
+    // cols[3] = Tasks count (skip), cols[4] = est, cols[5] = act
+    const est=parseFloat(cols[4])||0;
+    const act=parseFloat(cols[5])||0;
+    if(!name&&est===0)return;
+    // try to skip header row
+    if(isNaN(est)&&isNaN(act))return;
+    const prof=profiles.find(p=>p.name.toLowerCase()===assignee.toLowerCase());
+    tasks2.push({
+      id:nextId++, taskNo, name, assignee,
+      type:prof?prof.type:'art',
+      level:prof?prof.level:'middle',
+      est, act, manualH:null, manualUAH:null
+    });
+    added++;
+  });
+  $('pasteBuf').value='';
+  renderTasks2(); saveTasks2();
+  toast(`✅ Додано ${added} задач`);
+}
+
+/* ── JIRA OAUTH 2.0 PKCE ─────────────────────────────── */
+function b64url(buf){ const a=buf instanceof Uint8Array?buf:new Uint8Array(buf); return btoa(String.fromCharCode(...a)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+function randBytes(nb){ const a=new Uint8Array(nb); crypto.getRandomValues(a); return a; }
+async function pkceChallenge(verifier){ const enc=new TextEncoder().encode(verifier); const hash=await crypto.subtle.digest('SHA-256',enc); return b64url(new Uint8Array(hash)); }
+function getRedirectUri(){ return location.href.split('?')[0].split('#')[0]; }
+
+let auth={clientId:'',at:'',rt:'',cloudId:'',cloudName:'',exp:0};
+try{ const a=JSON.parse(localStorage.getItem('oh_auth')||'null'); if(a&&a.cloudId) auth=Object.assign(auth,a); }catch(e){}
+function saveAuth(){ try{ localStorage.setItem('oh_auth',JSON.stringify(auth)); }catch(e){} }
+
+function renderAuthState(){
+  const connected=!!(auth.at&&auth.cloudId);
+  $('jiraConnected').style.display=connected?'block':'none';
+  $('jiraSetup').style.display=connected?'none':'block';
+  if(connected) setT('jiraCloudName',auth.cloudName||auth.cloudId);
+  if(auth.clientId&&!connected) setV('jiraClientId',auth.clientId);
+  $('cbUrlDisplay').textContent=getRedirectUri();
+}
+
+async function connectJira(){
+  const cid=s('jiraClientId').trim();
+  if(!cid){ toast('⚠️ Вкажіть Client ID'); return; }
+  const verifier=b64url(randBytes(32));
+  const challenge=await pkceChallenge(verifier);
+  const state=b64url(randBytes(16));
+  localStorage.setItem('oh_pkce',JSON.stringify({verifier,state,clientId:cid}));
+  const redirect=getRedirectUri();
+  const scope='read:jira-data read:jira-work offline_access';
+  location.href=`https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=${cid}&scope=${encodeURIComponent(scope)}&redirect_uri=${encodeURIComponent(redirect)}&state=${state}&response_type=code&prompt=consent&code_challenge=${challenge}&code_challenge_method=S256`;
+}
+
+async function handleOAuthCallback(){
+  const p=new URLSearchParams(location.search);
+  const code=p.get('code'),retState=p.get('state');
+  if(!code) return;
+  let pkce;
+  try{ pkce=JSON.parse(localStorage.getItem('oh_pkce')||'null'); }catch(e){}
+  if(!pkce||pkce.state!==retState){ toast('⚠️ Невірний стан авторизації'); history.replaceState({},'',location.pathname); return; }
+  localStorage.removeItem('oh_pkce');
+  history.replaceState({},'',location.pathname);
+  toast('⏳ Авторизація…');
+  try{
+    const tokenResp=await fetch('https://auth.atlassian.com/oauth/token',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({grant_type:'authorization_code',client_id:pkce.clientId,code,redirect_uri:getRedirectUri(),code_verifier:pkce.verifier})
+    });
+    if(!tokenResp.ok){ const t=await tokenResp.text(); throw new Error('Token exchange: '+tokenResp.status+' '+t); }
+    const tok=await tokenResp.json();
+    auth.clientId=pkce.clientId;
+    auth.at=tok.access_token;
+    auth.rt=tok.refresh_token||'';
+    auth.exp=Date.now()+(((tok.expires_in||3600)-60)*1000);
+    const resResp=await fetch('https://api.atlassian.com/oauth/token/accessible-resources',{headers:{'Authorization':'Bearer '+auth.at,'Accept':'application/json'}});
+    const resources=await resResp.json();
+    if(Array.isArray(resources)&&resources.length){ auth.cloudId=resources[0].id; auth.cloudName=resources[0].name; }
+    saveAuth(); renderAuthState();
+    toast('✅ Підключено до '+auth.cloudName);
+    // Switch to Tab 2 after connecting
+    document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.tt').forEach(b=>b.classList.remove('active'));
+    $('tab-art').classList.add('active');
+    document.querySelectorAll('.tt')[1].classList.add('active');
+  }catch(e){ console.error(e); toast('⚠️ Помилка авторизації: '+e.message); }
+}
+
+async function refreshIfNeeded(){
+  if(!auth.rt) throw new Error('Не авторизовано');
+  if(auth.exp&&Date.now()<auth.exp) return;
+  const resp=await fetch('https://auth.atlassian.com/oauth/token',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({grant_type:'refresh_token',client_id:auth.clientId,refresh_token:auth.rt})
+  });
+  if(!resp.ok) throw new Error('Refresh failed '+resp.status);
+  const tok=await resp.json();
+  auth.at=tok.access_token;
+  if(tok.refresh_token) auth.rt=tok.refresh_token;
+  auth.exp=Date.now()+(((tok.expires_in||3600)-60)*1000);
+  saveAuth();
+}
+
+async function jiraFetch(path){
+  await refreshIfNeeded();
+  const resp=await fetch(`https://api.atlassian.com/ex/jira/${auth.cloudId}${path}`,{headers:{'Authorization':'Bearer '+auth.at,'Accept':'application/json'}});
+  if(resp.status===401){ auth.exp=0; saveAuth(); await refreshIfNeeded(); return jiraFetch(path); }
+  if(!resp.ok) throw new Error('Jira API '+resp.status);
+  return resp.json();
+}
+
+function disconnectJira(){
+  if(!confirm('Відключити Jira? Access token буде видалено.')) return;
+  auth={clientId:auth.clientId,at:'',rt:'',cloudId:'',cloudName:'',exp:0};
+  saveAuth(); renderAuthState(); toast('Відключено від Jira');
+}
+
+function copyCallbackUrl(){
+  navigator.clipboard.writeText(getRedirectUri()).then(()=>toast('📋 Callback URL скопійовано!')).catch(()=>toast('⚠️ Помилка'));
+}
+
+function showNewAssigneeUI(assignees){
+  return new Promise(resolve=>{
+    const overlay=document.createElement('div');
+    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
+    overlay.innerHTML=`<div style="background:var(--surface);border-radius:12px;padding:24px;max-width:520px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.35)">
+      <div style="font-weight:700;font-size:15px;margin-bottom:6px">👥 Нові виконавці з Jira</div>
+      <div style="font-size:13px;color:var(--text-2);margin-bottom:14px">Знайдено <strong>${assignees.length}</strong> нових людей. Вкажіть тип та рівень — збережуться в профілях і будуть підтягуватися автоматично.</div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead><tr>
+          <th style="text-align:left;padding:5px 8px;border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-2)">Ім'я</th>
+          <th style="padding:5px 8px;border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-2)">Тип</th>
+          <th style="padding:5px 8px;border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-2)">Рівень</th>
+        </tr></thead>
+        <tbody>${assignees.map((a,i)=>`<tr>
+          <td style="padding:6px 8px;border-bottom:1px solid var(--border)">${esc(a.name)}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid var(--border)">
+            <select id="na_t${i}" style="width:90px;padding:4px 6px;border:1px solid var(--border);border-radius:6px;background:var(--surface-2);color:var(--text);font-size:12px;font-family:inherit">
+              <option value="art">🎨 Худ.</option><option value="anim">🎬 Анім.</option>
+            </select>
+          </td>
+          <td style="padding:6px 8px;border-bottom:1px solid var(--border)">
+            <select id="na_l${i}" style="width:90px;padding:4px 6px;border:1px solid var(--border);border-radius:6px;background:var(--surface-2);color:var(--text);font-size:12px;font-family:inherit">
+              <option value="junior">Junior</option><option value="middle" selected>Middle</option><option value="senior">Senior</option>
+            </select>
+          </td>
+        </tr>`).join('')}</tbody>
+      </table>
+      <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap">
+        <button id="naSaveBtn" class="btn bp-">💾 Зберегти та продовжити</button>
+        <button id="naSkipBtn" class="btn bg-">Пропустити</button>
+      </div>
+    </div>`;
+    document.body.appendChild(overlay);
+    overlay.querySelector('#naSaveBtn').onclick=()=>{
+      assignees.forEach((a,i)=>{
+        if(!profiles.find(p=>p.name.toLowerCase()===a.name.toLowerCase())){
+          profiles.push({name:a.name,type:document.getElementById('na_t'+i)?.value||'art',level:document.getElementById('na_l'+i)?.value||'middle'});
+        }
+      });
+      saveProfiles(); renderProfiles();
+      document.body.removeChild(overlay); resolve();
+    };
+    overlay.querySelector('#naSkipBtn').onclick=()=>{ document.body.removeChild(overlay); resolve(); };
+  });
+}
+
+async function loadFromJira(){
+  if(!auth.at||!auth.cloudId){
+    toast('⚠️ Спочатку підключіть Jira вище');
+    $('jiraConnected').style.display='none';
+    $('jiraSetup').style.display='block';
+    return;
+  }
+  const key=s('projKey2').toUpperCase();
+  if(!key){ toast('⚠️ Вкажіть ключ проекту'); return; }
+  toast('⏳ Завантаження задач…');
+  try{
+    let startAt=0, allIssues=[], total=Infinity;
+    while(allIssues.length<total){
+      const data=await jiraFetch(`/rest/api/3/search?jql=project%3D${encodeURIComponent(key)}&maxResults=100&startAt=${startAt}&fields=summary,timeoriginalestimate,timespent,assignee`);
+      const batch=data.issues||[];
+      allIssues=allIssues.concat(batch);
+      total=data.total||0;
+      if(!batch.length) break;
+      startAt+=batch.length;
+    }
+    // Detect new assignees not yet in profiles
+    const newMap=new Map();
+    allIssues.forEach(issue=>{
+      const asgn=issue.fields?.assignee;
+      if(asgn){
+        const nm=asgn.displayName||asgn.emailAddress||'';
+        if(nm&&!newMap.has(nm.toLowerCase())&&!profiles.find(p=>p.name.toLowerCase()===nm.toLowerCase())){
+          newMap.set(nm.toLowerCase(),{name:nm});
+        }
+      }
+    });
+    if(newMap.size) await showNewAssigneeUI([...newMap.values()]);
+    // Build task list
+    tasks2=[];
+    allIssues.forEach(issue=>{
+      const nm=issue.fields?.summary||'';
+      const asgn=issue.fields?.assignee;
+      const assignee=asgn?(asgn.displayName||asgn.emailAddress||''):'';
+      const est=(issue.fields?.timeoriginalestimate||0)/3600;
+      const act=(issue.fields?.timespent||0)/3600;
+      const prof=profiles.find(p=>p.name.toLowerCase()===assignee.toLowerCase());
+      tasks2.push({id:nextId++,taskNo:issue.key,name:nm,assignee,
+        type:prof?.type||'art',level:prof?.level||'middle',
+        est:parseFloat(est.toFixed(2)),act:parseFloat(act.toFixed(2)),
+        manualH:null,manualUAH:null});
+    });
+    renderTasks2(); saveTasks2();
+    toast(`✅ Завантажено ${tasks2.length} задач з ${auth.cloudName}`);
+  }catch(e){
+    console.error(e);
+    if(e.message.includes('401')||e.message.includes('авторизован')||e.message.includes('Refresh')){
+      auth.at=''; auth.exp=0; saveAuth(); renderAuthState();
+      toast('⚠️ Сесія закінчилась — підключіться знову');
+    } else {
+      toast('⚠️ Помилка: '+e.message);
+    }
+  }
+}
+
+/* ── PROFILES ────────────────────────────────────────── */
+let profiles=[];
+try{profiles=JSON.parse(localStorage.getItem('oh_ppl')||'[]');}catch(e){}
+
+function saveProfiles(){ try{localStorage.setItem('oh_ppl',JSON.stringify(profiles));}catch(e){} }
+
+function renderProfiles(){
+  const el=$('profTbl');
+  if(!profiles.length){
+    el.innerHTML='<div style="font-size:12px;color:var(--text-2);padding:6px 0">Профілі ще не додані. Натисніть «+ Додати виконавця».</div>';
+    return;
+  }
+  el.innerHTML=`<table class="ptbl">
+    <thead><tr><th>Ім'я / нік</th><th>Тип</th><th>Рівень</th><th></th></tr></thead>
+    <tbody>${profiles.map((p,i)=>`<tr>
+      <td><input type="text" value="${esc(p.name)}" oninput="profSet(${i},'name',this.value)"></td>
+      <td><select style="width:90px" onchange="profSet(${i},'type',this.value)">
+        <option value="art" ${p.type==='art'?'selected':''}>🎨 Худ.</option>
+        <option value="anim" ${p.type==='anim'?'selected':''}>🎬 Анім.</option>
+      </select></td>
+      <td><select style="width:90px" onchange="profSet(${i},'level',this.value)">
+        <option value="junior" ${p.level==='junior'?'selected':''}>Junior</option>
+        <option value="middle" ${p.level==='middle'?'selected':''}>Middle</option>
+        <option value="senior" ${p.level==='senior'?'selected':''}>Senior</option>
+      </select></td>
+      <td><button class="ri-del" onclick="delProfile(${i})">✕</button></td>
+    </tr>`).join('')}
+    </tbody></table>`;
+}
+
+function profSet(i,field,val){ profiles[i][field]=val; saveProfiles(); }
+function addProfile(){ profiles.push({name:'',type:'art',level:'middle'}); renderProfiles(); saveProfiles(); }
+function delProfile(i){ profiles.splice(i,1); renderProfiles(); saveProfiles(); }
+
+/* ── PERSIST TASKS ────────────────────────────────────── */
+function saveTasks2(){ try{localStorage.setItem('oh_t2',JSON.stringify(tasks2));}catch(e){} }
+try{ const t=JSON.parse(localStorage.getItem('oh_t2')||'[]'); if(t.length){ tasks2=t; nextId=Math.max(...t.map(x=>x.id))+1; } }catch(e){}
+
+/* ── COPY REPORT TAB 2 ────────────────────────────────── */
+function copyRep2(){
+  calcSummary2();
+  const net=parseFloat($('s2hours').dataset.uah)||0;
+  const hrs=parseFloat($('s2hours').value)||0;
+  const eur=n('eurRate');
+  let txt=`🎨 БОНУСИ ХУДОЖНИКІВ ТА АНІМАТОРІВ\n${'═'.repeat(44)}\n`;
+  tasks2.forEach(t=>{
+    const b=bonusForTask(t.est,t.act,t.type,t.level,t.manualH,t.manualUAH);
+    const kpiStr=b.kpi!==null?fN(b.kpi)+'%':'—';
+    const type=t.type==='anim'?'Анім':'Худ.';
+    const lvl={junior:'Jr',middle:'Mid',senior:'Sr'}[t.level]||t.level;
+    const bStr=b.status==='bonus'?`+${fN(b.bonusH)}г / ${Math.round(b.bonusUAH).toLocaleString('uk-UA')} грн`:b.status==='penalty'?'штраф -1000 грн':b.status==='small'?'≤8г, немає':'—';
+    txt+=`${t.taskNo||'  '} | ${t.name.substring(0,30).padEnd(30)} | ${t.assignee.substring(0,14).padEnd(14)} | ${type} ${lvl} | KPI ${kpiStr} | ${bStr}\n`;
+  });
+  txt+=`${'─'.repeat(44)}\n`;
+  txt+=`Бонус разом : ${$('s2bonus').textContent}\nШтрафи      : ${$('s2penalty').textContent}\nНетто       : ${$('s2net').textContent}\n`;
+  if(eur>0) txt+=`Курс €      : ${eur} грн\nГодин подушки: ${fN(hrs)} год\n`;
+  txt+=`\nРозраховано: ${new Date().toLocaleString('uk-UA')}`;
+  navigator.clipboard.writeText(txt).then(()=>toast('📋 Скопійовано!')).catch(()=>toast('⚠️ Помилка'));
+}
+
+/* ── INIT ─────────────────────────────────────────────── */
+// OAuth: handle redirect callback or restore auth state
+handleOAuthCallback().catch(e=>console.error('oauth cb:',e)).finally(()=>renderAuthState());
+
+// EUR rate
+try{
+  const er=localStorage.getItem('oh_eur');
+  if(er) setV('eurRate',er);
+  $('eurRate').addEventListener('change',()=>{ try{localStorage.setItem('oh_eur',$('eurRate').value);}catch(e){} });
+}catch(e){}
+
+$('projDate').value=new Date().toLocaleDateString('uk-UA');
+renderSaved();
+renderProfiles();
+renderTasks2();
+setProjType('art');
+</script>
+</body>
+</html>
