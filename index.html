@@ -1066,7 +1066,7 @@ async function loadFromJira(){
   try{
     let startAt=0, allIssues=[], total=Infinity;
     while(allIssues.length<total){
-      const data=await jiraGet(`/rest/api/3/search?jql=project%3D${encodeURIComponent(key)}&maxResults=100&startAt=${startAt}&fields=summary,timeoriginalestimate,timespent,assignee`);
+      const data=await jiraGet(`/rest/api/3/search/jql?jql=project="${key}" ORDER BY key ASC&maxResults=100&startAt=${startAt}&fields=summary,timetracking,assignee`);
       const batch=data.issues||[];
       allIssues=allIssues.concat(batch);
       total=data.total||0;
@@ -1091,8 +1091,10 @@ async function loadFromJira(){
       const nm=issue.fields?.summary||'';
       const asgn=issue.fields?.assignee;
       const assignee=asgn?(asgn.displayName||asgn.emailAddress||''):'';
-      const est=(issue.fields?.timeoriginalestimate||0)/3600;
-      const act=(issue.fields?.timespent||0)/3600;
+      // timetracking field: originalEstimateSeconds / timeSpentSeconds
+      const tt=issue.fields?.timetracking||{};
+      const est=(tt.originalEstimateSeconds||issue.fields?.timeoriginalestimate||0)/3600;
+      const act=(tt.timeSpentSeconds||issue.fields?.timespent||0)/3600;
       const prof=profiles.find(p=>p.name.toLowerCase()===assignee.toLowerCase());
       tasks2.push({id:nextId++,taskNo:issue.key,name:nm,assignee,
         type:prof?.type||'art',level:prof?.level||'middle',
