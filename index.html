@@ -1183,6 +1183,7 @@ function startNewReport(){
   document.body.appendChild(overlay);
   overlay.querySelector('#confirmClear').onclick=()=>{
     tasks2=[]; nextId=1; renderTasks2(); saveTasks2();
+    profiles=[]; saveProfiles(); renderProfiles();
     // clear project key
     try{ setV('projKey2',''); }catch(e){}
     // clear URL hash if present
@@ -1254,8 +1255,8 @@ async function downloadExcel2(){
     // Store hyperlink info for task key column
     if(taskKey&&domain) linkMap[`A${rowIdx}`]='https://'+domain+'/browse/'+taskKey;
     wsData.push([taskKey, t.name, t.assignee, 1, estH, actH,
-      {f:`=(E${rowIdx}/F${rowIdx})*100`,t:'n'},
-      {f:`=100-G${rowIdx}`,t:'n'},
+      {f:`=ROUND((E${rowIdx}/F${rowIdx})*100,2)`,t:'n'},
+      {f:`=ROUND(100-G${rowIdx},2)`,t:'n'},
       bonusH!=null?bonusH:null,
       bonusUAH!=null?bonusUAH:null]);
   });
