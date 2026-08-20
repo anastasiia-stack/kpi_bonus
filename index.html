@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Бонуси — PM та Ліди · Художники та Аніматори</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -207,8 +207,7 @@ table.tasks td select.sel-lvl{width:82px}
   .tt{font-size:12px;padding:7px 8px}
 }
 </style>
-</head>
-<body>
+
 <div class="app">
 
 <div class="ph">
@@ -381,45 +380,19 @@ table.tasks td select.sel-lvl{width:82px}
 <!-- ══════════════ TAB 2: ARTISTS & ANIMATORS ══════════════ -->
 <div id="tab-art" class="tab-pane">
 
-<!-- Jira OAuth card -->
-<div class="card" id="jiraAuthCard">
-  <div id="jiraConnected" style="display:none">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-      <div>
-        <div style="font-weight:700;font-size:14px">✅ Підключено до Jira Cloud</div>
-        <div id="jiraCloudName" style="font-size:12px;color:var(--text-2);margin-top:2px"></div>
-      </div>
-      <button class="btn bg-" onclick="disconnectJira()">Відключити</button>
-    </div>
+<!-- Jira settings card -->
+<div class="card">
+  <div class="coll-hd" onclick="toggleColl('jiraSet','jiraArrow')">
+    <div class="ch-left" style="flex:1"><span style="font-size:18px">⚙️</span><span class="clabel">Підключення до Jira</span><span style="font-size:11px;color:var(--text-2);margin-left:8px">дані зберігаються у браузері</span></div>
+    <span class="coll-arrow" id="jiraArrow">▼</span>
   </div>
-  <div id="jiraSetup">
-    <div class="ch-left" style="margin-bottom:12px"><span style="font-size:18px">🔗</span><span class="clabel">Підключення до Jira Cloud</span></div>
-    <div class="g2" style="margin-bottom:10px">
-      <div class="f">
-        <div class="fl">Client ID (OAuth App)</div>
-        <input type="text" id="jiraClientId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" autocomplete="off">
-      </div>
-      <div class="f" style="justify-content:flex-end">
-        <button class="btn bp-" onclick="connectJira()">🔐 Підключити Jira</button>
-      </div>
+  <div class="coll-body hidden" id="jiraSet">
+    <div class="g3" style="margin-top:12px">
+      <div class="f"><div class="fl">Jira domain</div><input type="text" id="jiraDomain" placeholder="company.atlassian.net" oninput="saveJiraSettings()"></div>
+      <div class="f"><div class="fl">Email</div><input type="text" id="jiraEmail" placeholder="you@company.com" oninput="saveJiraSettings()"></div>
+      <div class="f"><div class="fl">API Token</div><input type="password" id="jiraToken" placeholder="••••••••" oninput="saveJiraSettings()"></div>
     </div>
-    <div class="coll-hd" onclick="toggleColl('jiraHelp','jiraHelpArrow')">
-      <span style="font-size:12px;color:var(--accent)">❓ Як отримати Client ID?</span>
-      <span class="coll-arrow" id="jiraHelpArrow">▼</span>
-    </div>
-    <div class="coll-body hidden" id="jiraHelp">
-      <div class="note" style="margin-top:8px;font-size:12px;line-height:1.8">
-        <strong>1.</strong> Відкрийте <a href="https://developer.atlassian.com/console/myapps/" target="_blank" style="color:var(--accent)">developer.atlassian.com → My apps</a><br>
-        <strong>2.</strong> Create app → <em>OAuth 2.0 integration</em><br>
-        <strong>3.</strong> Authorization → Callback URL — вставте:<br>
-        <div style="display:flex;align-items:center;gap:6px;margin:4px 0 6px">
-          <code id="cbUrlDisplay" style="background:var(--surface-2);padding:3px 7px;border-radius:5px;font-size:11px;word-break:break-all;flex:1;border:1px solid var(--border)"></code>
-          <button class="btn bg- btn-sm" onclick="copyCallbackUrl()">📋</button>
-        </div>
-        <strong>4.</strong> Permissions → <em>Jira API</em> → «View Jira issue data» та «View user profiles»<br>
-        <strong>5.</strong> Скопіюйте <strong>Client ID</strong> і вставте вище
-      </div>
-    </div>
+    <div class="note" style="margin-top:10px;font-size:12px">Token: Jira → Profile → Security → API tokens → Create</div>
   </div>
 </div>
 
@@ -1001,102 +974,32 @@ function parsePaste(){
   toast(`✅ Додано ${added} задач`);
 }
 
-/* ── JIRA OAUTH 2.0 PKCE ─────────────────────────────── */
-function b64url(buf){ const a=buf instanceof Uint8Array?buf:new Uint8Array(buf); return btoa(String.fromCharCode(...a)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
-function randBytes(nb){ const a=new Uint8Array(nb); crypto.getRandomValues(a); return a; }
-async function pkceChallenge(verifier){ const enc=new TextEncoder().encode(verifier); const hash=await crypto.subtle.digest('SHA-256',enc); return b64url(new Uint8Array(hash)); }
-function getRedirectUri(){ return location.href.split('?')[0].split('#')[0]; }
+/* ── JIRA BASIC AUTH via CORS PROXY ─────────────────── */
+const JIRA_PROXY='https://pmcheck.otkidach-anastasia23.workers.dev';
 
-let auth={clientId:'',at:'',rt:'',cloudId:'',cloudName:'',exp:0};
-try{ const a=JSON.parse(localStorage.getItem('oh_auth')||'null'); if(a&&a.cloudId) auth=Object.assign(auth,a); }catch(e){}
-function saveAuth(){ try{ localStorage.setItem('oh_auth',JSON.stringify(auth)); }catch(e){} }
+let jiraCreds={domain:'',email:'',token:''};
+try{ const j=JSON.parse(localStorage.getItem('oh_jira')||'null'); if(j&&j.domain) jiraCreds=j; }catch(e){}
 
-function renderAuthState(){
-  const connected=!!(auth.at&&auth.cloudId);
-  $('jiraConnected').style.display=connected?'block':'none';
-  $('jiraSetup').style.display=connected?'none':'block';
-  if(connected) setT('jiraCloudName',auth.cloudName||auth.cloudId);
-  if(auth.clientId&&!connected) setV('jiraClientId',auth.clientId);
-  $('cbUrlDisplay').textContent=getRedirectUri();
+function saveJiraSettings(){
+  jiraCreds={
+    domain:s('jiraDomain').replace(/^https?:\/\//,'').replace(/\/$/,''),
+    email:s('jiraEmail'),
+    token:s('jiraToken')
+  };
+  try{ localStorage.setItem('oh_jira',JSON.stringify(jiraCreds)); }catch(e){}
 }
 
-async function connectJira(){
-  const cid=s('jiraClientId').trim();
-  if(!cid){ toast('⚠️ Вкажіть Client ID'); return; }
-  const verifier=b64url(randBytes(32));
-  const challenge=await pkceChallenge(verifier);
-  const state=b64url(randBytes(16));
-  localStorage.setItem('oh_pkce',JSON.stringify({verifier,state,clientId:cid}));
-  const redirect=getRedirectUri();
-  const scope='read:jira-data read:jira-work offline_access';
-  location.href=`https://auth.atlassian.com/authorize?audience=api.atlassian.com&client_id=${cid}&scope=${encodeURIComponent(scope)}&redirect_uri=${encodeURIComponent(redirect)}&state=${state}&response_type=code&prompt=consent&code_challenge=${challenge}&code_challenge_method=S256`;
-}
-
-async function handleOAuthCallback(){
-  const p=new URLSearchParams(location.search);
-  const code=p.get('code'),retState=p.get('state');
-  if(!code) return;
-  let pkce;
-  try{ pkce=JSON.parse(localStorage.getItem('oh_pkce')||'null'); }catch(e){}
-  if(!pkce||pkce.state!==retState){ toast('⚠️ Невірний стан авторизації'); history.replaceState({},'',location.pathname); return; }
-  localStorage.removeItem('oh_pkce');
-  history.replaceState({},'',location.pathname);
-  toast('⏳ Авторизація…');
-  try{
-    const tokenResp=await fetch('https://auth.atlassian.com/oauth/token',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({grant_type:'authorization_code',client_id:pkce.clientId,code,redirect_uri:getRedirectUri(),code_verifier:pkce.verifier})
-    });
-    if(!tokenResp.ok){ const t=await tokenResp.text(); throw new Error('Token exchange: '+tokenResp.status+' '+t); }
-    const tok=await tokenResp.json();
-    auth.clientId=pkce.clientId;
-    auth.at=tok.access_token;
-    auth.rt=tok.refresh_token||'';
-    auth.exp=Date.now()+(((tok.expires_in||3600)-60)*1000);
-    const resResp=await fetch('https://api.atlassian.com/oauth/token/accessible-resources',{headers:{'Authorization':'Bearer '+auth.at,'Accept':'application/json'}});
-    const resources=await resResp.json();
-    if(Array.isArray(resources)&&resources.length){ auth.cloudId=resources[0].id; auth.cloudName=resources[0].name; }
-    saveAuth(); renderAuthState();
-    toast('✅ Підключено до '+auth.cloudName);
-    // Switch to Tab 2 after connecting
-    document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
-    document.querySelectorAll('.tt').forEach(b=>b.classList.remove('active'));
-    $('tab-art').classList.add('active');
-    document.querySelectorAll('.tt')[1].classList.add('active');
-  }catch(e){ console.error(e); toast('⚠️ Помилка авторизації: '+e.message); }
-}
-
-async function refreshIfNeeded(){
-  if(!auth.rt) throw new Error('Не авторизовано');
-  if(auth.exp&&Date.now()<auth.exp) return;
-  const resp=await fetch('https://auth.atlassian.com/oauth/token',{
-    method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({grant_type:'refresh_token',client_id:auth.clientId,refresh_token:auth.rt})
-  });
-  if(!resp.ok) throw new Error('Refresh failed '+resp.status);
-  const tok=await resp.json();
-  auth.at=tok.access_token;
-  if(tok.refresh_token) auth.rt=tok.refresh_token;
-  auth.exp=Date.now()+(((tok.expires_in||3600)-60)*1000);
-  saveAuth();
-}
-
-async function jiraFetch(path){
-  await refreshIfNeeded();
-  const resp=await fetch(`https://api.atlassian.com/ex/jira/${auth.cloudId}${path}`,{headers:{'Authorization':'Bearer '+auth.at,'Accept':'application/json'}});
-  if(resp.status===401){ auth.exp=0; saveAuth(); await refreshIfNeeded(); return jiraFetch(path); }
-  if(!resp.ok) throw new Error('Jira API '+resp.status);
+async function jiraGet(path){
+  const {domain,email,token}=jiraCreds;
+  if(!domain||!email||!token) throw new Error('no_creds');
+  const jiraUrl='https://'+domain+path;
+  const proxyUrl=JIRA_PROXY+'?url='+encodeURIComponent(jiraUrl);
+  const resp=await fetch(proxyUrl,{headers:{'Authorization':'Basic '+btoa(email+':'+token),'Accept':'application/json'}});
+  if(resp.status===401) throw new Error('Невірний email або API token');
+  if(resp.status===403) throw new Error('Немає доступу до проекту');
+  if(resp.status===400) throw new Error('Невірний project key або JQL');
+  if(!resp.ok) throw new Error('Jira error '+resp.status);
   return resp.json();
-}
-
-function disconnectJira(){
-  if(!confirm('Відключити Jira? Access token буде видалено.')) return;
-  auth={clientId:auth.clientId,at:'',rt:'',cloudId:'',cloudName:'',exp:0};
-  saveAuth(); renderAuthState(); toast('Відключено від Jira');
-}
-
-function copyCallbackUrl(){
-  navigator.clipboard.writeText(getRedirectUri()).then(()=>toast('📋 Callback URL скопійовано!')).catch(()=>toast('⚠️ Помилка'));
 }
 
 function showNewAssigneeUI(assignees){
@@ -1105,7 +1008,7 @@ function showNewAssigneeUI(assignees){
     overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
     overlay.innerHTML=`<div style="background:var(--surface);border-radius:12px;padding:24px;max-width:520px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.35)">
       <div style="font-weight:700;font-size:15px;margin-bottom:6px">👥 Нові виконавці з Jira</div>
-      <div style="font-size:13px;color:var(--text-2);margin-bottom:14px">Знайдено <strong>${assignees.length}</strong> нових людей. Вкажіть тип та рівень — збережуться в профілях і будуть підтягуватися автоматично.</div>
+      <div style="font-size:13px;color:var(--text-2);margin-bottom:14px">Знайдено <strong>${assignees.length}</strong> нових людей. Вкажіть тип та рівень — збережуться в профілях.</div>
       <table style="width:100%;border-collapse:collapse;font-size:13px">
         <thead><tr>
           <th style="text-align:left;padding:5px 8px;border-bottom:1px solid var(--border);font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-2)">Ім'я</th>
@@ -1146,10 +1049,11 @@ function showNewAssigneeUI(assignees){
 }
 
 async function loadFromJira(){
-  if(!auth.at||!auth.cloudId){
-    toast('⚠️ Спочатку підключіть Jira вище');
-    $('jiraConnected').style.display='none';
-    $('jiraSetup').style.display='block';
+  const {domain,email,token}=jiraCreds;
+  if(!domain||!email||!token){
+    toast('⚙️ Вкажіть дані Jira у розділі вище');
+    // Open the collapsible
+    const b=$('jiraSet'); if(b.classList.contains('hidden')){ b.classList.remove('hidden'); $('jiraArrow').classList.add('open'); }
     return;
   }
   const key=s('projKey2').toUpperCase();
@@ -1158,7 +1062,7 @@ async function loadFromJira(){
   try{
     let startAt=0, allIssues=[], total=Infinity;
     while(allIssues.length<total){
-      const data=await jiraFetch(`/rest/api/3/search?jql=project%3D${encodeURIComponent(key)}&maxResults=100&startAt=${startAt}&fields=summary,timeoriginalestimate,timespent,assignee`);
+      const data=await jiraGet(`/rest/api/3/search?jql=project%3D${encodeURIComponent(key)}&maxResults=100&startAt=${startAt}&fields=summary,timeoriginalestimate,timespent,assignee`);
       const batch=data.issues||[];
       allIssues=allIssues.concat(batch);
       total=data.total||0;
@@ -1192,14 +1096,13 @@ async function loadFromJira(){
         manualH:null,manualUAH:null});
     });
     renderTasks2(); saveTasks2();
-    toast(`✅ Завантажено ${tasks2.length} задач з ${auth.cloudName}`);
+    toast(`✅ Завантажено ${tasks2.length} задач з Jira`);
   }catch(e){
     console.error(e);
-    if(e.message.includes('401')||e.message.includes('авторизован')||e.message.includes('Refresh')){
-      auth.at=''; auth.exp=0; saveAuth(); renderAuthState();
-      toast('⚠️ Сесія закінчилась — підключіться знову');
+    if(e.message==='no_creds'){
+      toast('⚙️ Вкажіть дані Jira у розділі вище');
     } else {
-      toast('⚠️ Помилка: '+e.message);
+      toast('⚠️ '+e.message);
     }
   }
 }
@@ -1265,8 +1168,14 @@ function copyRep2(){
 }
 
 /* ── INIT ─────────────────────────────────────────────── */
-// OAuth: handle redirect callback or restore auth state
-handleOAuthCallback().catch(e=>console.error('oauth cb:',e)).finally(()=>renderAuthState());
+// Restore Jira credentials
+try{
+  const j=JSON.parse(localStorage.getItem('oh_jira')||'{}');
+  if(j.domain) setV('jiraDomain',j.domain);
+  if(j.email) setV('jiraEmail',j.email);
+  if(j.token) setV('jiraToken',j.token);
+  if(j.domain) jiraCreds=j;
+}catch(e){}
 
 // EUR rate
 try{
@@ -1281,5 +1190,6 @@ renderProfiles();
 renderTasks2();
 setProjType('art');
 </script>
+
 </body>
 </html>
