@@ -990,14 +990,18 @@ function saveJiraSettings(){
 }
 
 async function jiraGet(path){
-  const {domain,email,token}=jiraCreds;
-  if(!domain||!email||!token) throw new Error('no_creds');
+  const {domain:rawDomain,email,token}=jiraCreds;
+  if(!rawDomain||!email||!token) throw new Error('no_creds');
+  // always strip protocol + trailing slash defensively
+  const domain=rawDomain.replace(/^https?:\/\//,'').replace(/\/+$/,'');
   const jiraUrl='https://'+domain+path;
   const proxyUrl=JIRA_PROXY+'?url='+encodeURIComponent(jiraUrl);
   const resp=await fetch(proxyUrl,{headers:{'Authorization':'Basic '+btoa(email+':'+token),'Accept':'application/json'}});
   if(resp.status===401) throw new Error('Невірний email або API token');
   if(resp.status===403) throw new Error('Немає доступу до проекту');
   if(resp.status===400) throw new Error('Невірний project key або JQL');
+  if(resp.status===404) throw new Error('Проект не знайдено — перевір ключ проекту');
+  if(resp.status===410) throw new Error('Jira: невірний домен або URL (410). Перевір — формат: picshotstudio.atlassian.net');
   if(!resp.ok) throw new Error('Jira error '+resp.status);
   return resp.json();
 }
@@ -1171,10 +1175,14 @@ function copyRep2(){
 // Restore Jira credentials
 try{
   const j=JSON.parse(localStorage.getItem('oh_jira')||'{}');
-  if(j.domain) setV('jiraDomain',j.domain);
+  if(j.domain){
+    // strip any protocol/trailing slash that may have been saved previously
+    j.domain=j.domain.replace(/^https?:\/\//,'').replace(/\/+$/,'');
+    setV('jiraDomain',j.domain);
+    jiraCreds=j;
+  }
   if(j.email) setV('jiraEmail',j.email);
   if(j.token) setV('jiraToken',j.token);
-  if(j.domain) jiraCreds=j;
 }catch(e){}
 
 // EUR rate
