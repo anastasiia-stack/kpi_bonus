@@ -409,14 +409,6 @@ table.tasks td select.sel-lvl{width:82px}
       </div>
     </div>
   </div>
-  <div class="f">
-    <div class="fl">Або вставте рядки з Excel (копіюйте колонки A–F: №, Назва, Виконавець, Tasks, Оцінка, Факт)</div>
-    <textarea id="pasteBuf" placeholder="MM-1&#9;High Symbols Full Dev&#9;vladlena&#9;1&#9;84.5&#9;76.2&#10;MM-2&#9;Low Symbols Full Dev&#9;Iryna&#9;1&#9;35&#9;52.9&#10;…"></textarea>
-    <div style="margin-top:6px;display:flex;gap:8px">
-      <button class="btn bp-" onclick="parsePaste()">📋 Імпортувати вставлене</button>
-      <button class="btn bg-" onclick="clearTasks()">✕ Очистити таблицю</button>
-    </div>
-  </div>
 </div>
 
 <!-- Assignee profiles -->
@@ -485,7 +477,9 @@ table.tasks td select.sel-lvl{width:82px}
     </div>
     <div class="acts">
       <button class="btn bp-" onclick="transferToTab1()">→ Перенести в Tab 1</button>
-      <button class="btn bo-" onclick="copyRep2()">📋 Копіювати звіт</button>
+      <button class="btn bp-" onclick="downloadExcel2()">📥 Скачати Excel</button>
+      <button class="btn bo-" onclick="saveShareLink()">🔗 Зберегти посилання</button>
+      <button class="btn bg-" onclick="startNewReport()">🗑 Новий звіт</button>
     </div>
   </div>
 </div>
@@ -858,8 +852,8 @@ function renderTasks2(){
       <td><span class="kpi-val ${kpiCls}">${kpiStr}</span></td>
       <td><input type="number" class="m" value="${bHval||''}" min="0" step="0.5" placeholder="авто"
         oninput="taskSet(${t.id},'manualH',this.value===''?null:+this.value)"></td>
-      <td><input type="number" class="m" value="${bUval||''}" min="0" placeholder="авто"
-        oninput="taskSet(${t.id},'manualUAH',this.value===''?null:+this.value)"></td>
+      <td><input type="number" class="m" value="${t.manualUAH!=null?t.manualUAH:bonusUAH>0?bonusUAH:''}" min="0" placeholder="авто"
+        onchange="taskSet(${t.id},'manualUAH',this.value===''?null:+this.value)"></td>
       <td>${statusHtml}</td>
       <td><button class="ri-del" onclick="delTask(${t.id})" title="Видалити">✕</button></td>
     </tr>`;
@@ -1173,6 +1167,118 @@ function copyRep2(){
   navigator.clipboard.writeText(txt).then(()=>toast('📋 Скопійовано!')).catch(()=>toast('⚠️ Помилка'));
 }
 
+/* ── НОВІ ФУНКЦІЇ TAB 2 ───────────────────────────────── */
+
+function startNewReport(){
+  const overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
+  overlay.innerHTML=`<div style="background:var(--surface);border-radius:12px;padding:24px;max-width:360px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.35)">
+    <div style="font-weight:700;font-size:15px;margin-bottom:10px">🗑 Новий звіт</div>
+    <div style="font-size:13px;color:var(--text-2);margin-bottom:18px">Всі задачі будуть видалені. Профілі виконавців збережуться.</div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn bg-" onclick="this.closest('[style]').remove()">Скасувати</button>
+      <button class="btn bp-" id="confirmClear">Очистити</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+  overlay.querySelector('#confirmClear').onclick=()=>{
+    tasks2=[]; nextId=1; renderTasks2(); saveTasks2();
+    // clear project key
+    try{ setV('projKey2',''); }catch(e){}
+    // clear URL hash if present
+    if(location.hash) history.replaceState(null,'',location.pathname+location.search);
+    overlay.remove();
+    toast('🗑 Новий звіт розпочато');
+  };
+}
+
+function saveShareLink(){
+  calcSummary2();
+  const payload={
+    v:1,
+    key:s('projKey2'),
+    eur:n('eurRate'),
+    tasks:tasks2.map(t=>({...t}))
+  };
+  let encoded;
+  try{ encoded=btoa(unescape(encodeURIComponent(JSON.stringify(payload)))); }
+  catch(e){ toast('⚠️ Помилка кодування'); return; }
+  const url=location.origin+location.pathname+'#r='+encoded;
+  const overlay=document.createElement('div');
+  overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px';
+  overlay.innerHTML=`<div style="background:var(--surface);border-radius:12px;padding:24px;max-width:520px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.35)">
+    <div style="font-weight:700;font-size:15px;margin-bottom:6px">🔗 Посилання на звіт</div>
+    <div style="font-size:12px;color:var(--text-2);margin-bottom:10px">Скопіюйте і поділіться — при відкритті завантажаться ці задачі.</div>
+    <div style="display:flex;gap:6px;margin-bottom:14px">
+      <input id="shareLinkInp" type="text" value="${url}" readonly style="flex:1;font-size:11px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-family:monospace">
+      <button class="btn bp-" onclick="navigator.clipboard.writeText(document.getElementById('shareLinkInp').value).then(()=>this.textContent='✓ Скопійовано!')">📋 Копіювати</button>
+    </div>
+    <div style="display:flex;justify-content:flex-end">
+      <button class="btn bg-" onclick="this.closest('[style]').remove()">Закрити</button>
+    </div>
+  </div>`;
+  document.body.appendChild(overlay);
+  // also update URL in browser without reload
+  history.replaceState(null,'',location.pathname+(location.search||'')+'#r='+encoded);
+}
+
+async function downloadExcel2(){
+  // Dynamically load SheetJS from CDN
+  if(!window.XLSX){
+    await new Promise((res,rej)=>{
+      const s=document.createElement('script');
+      s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+      s.onload=res; s.onerror=rej;
+      document.head.appendChild(s);
+    });
+  }
+  const XLSX=window.XLSX;
+  const domain=jiraCreds.domain||'';
+  const projKey=s('projKey2')||'Звіт';
+  const wb=XLSX.utils.book_new();
+  const wsData=[];
+
+  // Row 1 — project title
+  wsData.push([projKey+' — KPI художників та аніматорів',null,null,null,null,null,null,null,null,null]);
+  // Row 2 — headers
+  wsData.push(['Task №','Task Name','Assignee','Tasks','Estimation /H','Time (Actual)','KPI %(task)','Вихід за ест. %','Бонусів, год.','Бонус (грн)']);
+
+  const linkMap={};
+  tasks2.forEach((t,i)=>{
+    const b=bonusForTask(t.est,t.act,t.type,t.level,t.manualH,t.manualUAH);
+    const rowIdx=i+3; // 1-based, rows 1-2 are header
+    const estH=t.est||0, actH=t.act||0;
+    const bonusH=b.status==='bonus'?b.bonusH:null;
+    const bonusUAH=b.status==='bonus'?Math.round(b.bonusUAH):b.status==='penalty'?-1000:null;
+    const taskKey=t.taskNo||'';
+    // Store hyperlink info for task key column
+    if(taskKey&&domain) linkMap[`A${rowIdx}`]='https://'+domain+'/browse/'+taskKey;
+    wsData.push([taskKey, t.name, t.assignee, 1, estH, actH,
+      {f:`=(E${rowIdx}/F${rowIdx})*100`,t:'n'},
+      {f:`=100-G${rowIdx}`,t:'n'},
+      bonusH!=null?bonusH:null,
+      bonusUAH!=null?bonusUAH:null]);
+  });
+
+  const ws=XLSX.utils.aoa_to_sheet(wsData);
+
+  // Apply hyperlinks to task key cells
+  Object.entries(linkMap).forEach(([cell,href])=>{
+    if(ws[cell]) ws[cell].l={Target:href};
+  });
+
+  // Column widths
+  ws['!cols']=[{wch:14},{wch:42},{wch:18},{wch:7},{wch:14},{wch:13},{wch:12},{wch:14},{wch:13},{wch:13}];
+
+  // Merge first row across all columns
+  ws['!merges']=[{s:{r:0,c:0},e:{r:0,c:9}}];
+
+  XLSX.utils.book_append_sheet(wb,ws,'KPI');
+  const fname=`${projKey}_KPI_${new Date().toISOString().slice(0,10)}.xlsx`;
+  XLSX.writeFile(wb,fname);
+  toast('📥 Excel завантажено: '+fname);
+}
+
 /* ── INIT ─────────────────────────────────────────────── */
 // Restore Jira credentials
 try{
@@ -1197,6 +1303,25 @@ try{
 $('projDate').value=new Date().toLocaleDateString('uk-UA');
 renderSaved();
 renderProfiles();
+
+// Restore report from URL hash (shared link)
+(function(){
+  const hash=location.hash;
+  const m=hash.match(/^#r=(.+)$/);
+  if(m){
+    try{
+      const payload=JSON.parse(decodeURIComponent(escape(atob(m[1]))));
+      if(payload&&Array.isArray(payload.tasks)){
+        tasks2=payload.tasks;
+        nextId=tasks2.reduce((mx,t)=>Math.max(mx,(t.id||0)+1),1);
+        if(payload.key) { try{ setV('projKey2',payload.key); }catch(e){} }
+        if(payload.eur) { try{ setV('eurRate',payload.eur); }catch(e){} }
+        toast('🔗 Звіт завантажено з посилання');
+      }
+    }catch(e){ console.warn('hash restore failed',e); }
+  }
+})();
+
 renderTasks2();
 setProjType('art');
 </script>
