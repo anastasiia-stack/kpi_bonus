@@ -246,8 +246,8 @@ table.tasks td select.sel-lvl{width:82px}
     <div class="pct pct-n" id="artPct">—%</div>
   </div>
   <div class="g2">
-    <div class="f"><div class="fl">Стартова подушка (год)</div><input type="number" class="m" id="artStart" placeholder="0" min="0" step="0.5" oninput="calc()"></div>
-    <div class="f"><div class="fl">Фінальна подушка (год)</div><input type="number" class="m" id="artFinal" placeholder="0" min="0" step="0.5" oninput="calc()"></div>
+    <div class="f"><div class="fl">Стартова подушка (год)</div><input type="number" class="m" id="artStart" placeholder="0" min="0" step="0.5" oninput="calc()" onchange="calc()"></div>
+    <div class="f"><div class="fl">Фінальна подушка (год)</div><input type="number" class="m" id="artFinal" placeholder="0" min="0" step="0.5" oninput="calc()" onchange="calc()"></div>
   </div>
   <div class="pb-wrap"><div class="pb" id="artBar" style="width:0%;background:var(--border-2)"></div></div>
 </div>
@@ -259,8 +259,8 @@ table.tasks td select.sel-lvl{width:82px}
     <div class="pct pct-n" id="animPct">—%</div>
   </div>
   <div class="g2">
-    <div class="f"><div class="fl">Стартова подушка (год)</div><input type="number" class="m" id="animStart" placeholder="0" min="0" step="0.5" oninput="calc()"></div>
-    <div class="f"><div class="fl">Фінальна подушка (год)</div><input type="number" class="m" id="animFinal" placeholder="0" min="0" step="0.5" oninput="calc()"></div>
+    <div class="f"><div class="fl">Стартова подушка (год)</div><input type="number" class="m" id="animStart" placeholder="0" min="0" step="0.5" oninput="calc()" onchange="calc()"></div>
+    <div class="f"><div class="fl">Фінальна подушка (год)</div><input type="number" class="m" id="animFinal" placeholder="0" min="0" step="0.5" oninput="calc()" onchange="calc()"></div>
   </div>
   <div class="pb-wrap"><div class="pb" id="animBar" style="width:0%;background:var(--border-2)"></div></div>
 </div>
@@ -1249,14 +1249,15 @@ async function downloadExcel2(){
     const b=bonusForTask(t.est,t.act,t.type,t.level,t.manualH,t.manualUAH);
     const rowIdx=i+3; // 1-based, rows 1-2 are header
     const estH=t.est||0, actH=t.act||0;
-    const bonusH=b.status==='bonus'?b.bonusH:null;
-    const bonusUAH=b.status==='bonus'?Math.round(b.bonusUAH):b.status==='penalty'?-1000:null;
+    // include manual overrides: bonusH/bonusUAH are already resolved in bonusForTask
+    const bonusH=b.bonusH>0?b.bonusH:null;
+    const bonusUAH=b.status==='penalty'?-1000:(b.bonusUAH>0?Math.round(b.bonusUAH):null);
     const taskKey=t.taskNo||'';
     // Store hyperlink info for task key column
     if(taskKey&&domain) linkMap[`A${rowIdx}`]='https://'+domain+'/browse/'+taskKey;
     wsData.push([taskKey, t.name, t.assignee, 1, estH, actH,
-      {f:`=ROUND((E${rowIdx}/F${rowIdx})*100,2)`,t:'n'},
-      {f:`=ROUND(100-G${rowIdx},2)`,t:'n'},
+      {f:`ROUND((E${rowIdx}/F${rowIdx})*100,2)`,t:'n'},
+      {f:`ROUND(100-G${rowIdx},2)`,t:'n'},
       bonusH!=null?bonusH:null,
       bonusUAH!=null?bonusUAH:null]);
   });
